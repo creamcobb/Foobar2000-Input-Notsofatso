@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{23F5A2AC-7A19-4FFF-98DD-06C61437D3D3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>foo_input_notsofatso</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EXTERN_COMPONENT_OBJECT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\foo_sdk;..\..\..\Library\WTL90\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <BasicRuntimeChecks />
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pfc.lib;foobar2000_SDK.lib;foobar2000_ATL_helpers.lib;foobar2000_sdk_helpers.lib;foobar2000_component_client.lib;shared.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>
+      </SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>..\foo_sdk\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile />
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CN106Wave.cpp" />
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="CFDSWave.cpp" />
+    <ClCompile Include="CFME07Wave.cpp" />
+    <ClCompile Include="CMMC5SquareWave.cpp" />
+    <ClCompile Include="CSquareWaves.cpp" />
+    <ClCompile Include="CTNDWaves.cpp" />
+    <ClCompile Include="CVRC6PulseWave.cpp" />
+    <ClCompile Include="CVRC6SawWave.cpp" />
+    <ClCompile Include="NSF.cpp" />
+    <ClCompile Include="MainDlg.cpp" />
+    <ClCompile Include="ChannelsDlg.cpp" />
+    <ClCompile Include="ConfigDlg.cpp" />
+    <ClCompile Include="FME07Dlg.cpp" />
+    <ClCompile Include="MMC5Dlg.cpp" />
+    <ClCompile Include="N106Dlg.cpp" />
+    <ClCompile Include="VRC6Dlg.cpp" />
+    <ClCompile Include="VRC7Dlg.cpp" />
+    <ClCompile Include="MOS6502.cpp" />
+    <ClCompile Include="CNSFCore.cpp" />
+    <ClCompile Include="CNSFFile.cpp" />
+    <ClCompile Include="Wave_VRC7.cpp" />
+    <ClCompile Include="fmopl.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CFDSWave.h" />
+    <ClInclude Include="CVRC6SawWave.h" />
+    <ClInclude Include="GUI.h" />
+    <ClInclude Include="CMMC5SquareWave.h" />
+    <ClInclude Include="NSF.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="CNSFCore.h" />
+    <ClInclude Include="CNSFFile.h" />
+    <ClInclude Include="CFME07Wave.h" />
+    <ClInclude Include="CN106Wave.h" />
+    <ClInclude Include="CSquareWaves.h" />
+    <ClInclude Include="CTNDWaves.h" />
+    <ClInclude Include="CVRC6PulseWave.h" />
+    <ClInclude Include="fmopl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

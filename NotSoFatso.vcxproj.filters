@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{22698feb-64be-44db-99b8-ba7399ba05c0}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="NSF Core">
+      <UniqueIdentifier>{ece7f46c-8305-4515-8fff-da97bbeb2279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App Files">
+      <UniqueIdentifier>{52f26d1e-42e6-48d3-a769-14a7b67f36a3}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="App Files\GUI">
+      <UniqueIdentifier>{3e14485d-997f-4a71-8e75-2ffca19ea192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NSF Core\Channels">
+      <UniqueIdentifier>{111a1521-b129-4b1f-aad3-540afd7aa019}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ChannelsDlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigDlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="FME07Dlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MMC5Dlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="N106Dlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="VRC6Dlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="VRC7Dlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="fmopl.c">
+      <Filter>NSF Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MainDlg.cpp">
+      <Filter>App Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="NSF.cpp">
+      <Filter>App Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>App Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Wave_VRC7.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CFDSWave.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CFME07Wave.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CMMC5SquareWave.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CN106Wave.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CSquareWaves.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CTNDWaves.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CVRC6PulseWave.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="CVRC6SawWave.cpp">
+      <Filter>NSF Core\Channels</Filter>
+    </ClCompile>
+    <ClCompile Include="MOS6502.cpp">
+      <Filter>NSF Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CNSFCore.cpp">
+      <Filter>NSF Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CNSFFile.cpp">
+      <Filter>NSF Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fmopl.h">
+      <Filter>NSF Core</Filter>
+    </ClInclude>
+    <ClInclude Include="NSF.h">
+      <Filter>App Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI.h">
+      <Filter>App Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CFDSWave.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CFME07Wave.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CMMC5SquareWave.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CN106Wave.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CSquareWaves.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CTNDWaves.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CVRC6PulseWave.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CVRC6SawWave.h">
+      <Filter>NSF Core\Channels</Filter>
+    </ClInclude>
+    <ClInclude Include="CNSFCore.h">
+      <Filter>NSF Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CNSFFile.h">
+      <Filter>NSF Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
