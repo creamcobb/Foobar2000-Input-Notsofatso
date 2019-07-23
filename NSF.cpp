@@ -164,19 +164,17 @@ bool input_nosofatso::g_is_our_path(const char *, const char * p_extension)
 static input_factory_t<input_nosofatso> g_input_nosofatso_factory;
 DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 \
-"Program : Nintendo Entertainment System Audio Processing Unit Emulator\n"\
-"Platform : Intel 80386\n"\
-"Programmer : Slick Productions (Disch), Wilbert Lee\n"\
+"Program: Nintendo Entertainment System Audio Processing Unit Emulator\n"\
+"Platform: Intel 80386\n"\
+"Programmer: Slick Productions (Disch), Wilbert Lee\n"\
 "\n"\
 "Credits and stuff\n"
-"\n"\
 "Disch, Drag - Coding, design and all that good stuff.\n"\
 "Tatsuyuki Satoh, Quietust, Xodnizel - VRC7 Support.\n"\
 "Tzar - That owns.\n"\
 "Brad Taylor, Blargg, Kent Hansen, Miyama, Goroh - For the great sound docs.\n"\
 "\n"\
 "Copyright\n"
-"\n"\
 "This program is free software; you can redistribute it and / or modify "\
 "it under the terms of the GNU General Public License as published by "\
 "the Free Software Foundation; either version 2 of the License, or "\
@@ -191,8 +189,8 @@ DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 "along with this program; if not, write to the Free Software "\
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111 - 1307  USA\n"\
 "\n"\
-"Copyright (C) 2004 Disch\n"\
-"Copyright (C) 2015 Wilbert Lee\n"\
+"Copyright 2004 Disch\n"\
+"Copyright 2015 Wilbert Lee\n"\
 );
 DECLARE_FILE_TYPE("NSF Sound Format", "*.NSF;*.NSFE");
 // This will prevent users from renaming your component around (important for proper troubleshooter behaviors) or loading multiple instances of it.

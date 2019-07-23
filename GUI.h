@@ -49,17 +49,20 @@
 	*MainDlg::lpStateChanged = preferences_state::changed | preferences_state::resettable;\
 	(*MainDlg::lpCallback)->on_state_changed();\
 	break;	
+
 namespace MainDlg
 {
 	extern t_uint32 *lpStateChanged;
 	extern const preferences_page_callback::ptr *lpCallback;
 	extern HWND hWnd, hFrame, hTabCtrl;
-	BOOL __stdcall	 DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	BOOL __stdcall DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 }
 
 namespace ChannelsDlg
 {
 	extern HWND hWnd, hMix[6], hVol[6], hInv[6], hPan[6], hVolBox[6], hPanBox[6];
+
 	BOOL __stdcall DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 }
 
@@ -70,6 +73,7 @@ namespace ConfigDlg
 	extern HWND hHighPassBar, hHighPass, hHighPassOn;
 	extern HWND hLowPassBar, hLowPass, hLowPassOn;
 	extern HWND hPrePassBar, hPrePass, hPrePassOn;
+
 	void SetOptions(const NSF_COMMONOPTIONS com, const NSF_ADVANCEDOPTIONS opt);
 	void GetOptions(NSF_COMMONOPTIONS &com, NSF_ADVANCEDOPTIONS &opt);
 	BOOL __stdcall DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -77,14 +81,13 @@ namespace ConfigDlg
 
 namespace ConfigDlg2
 {
-
 	extern HWND hWnd, hIgnore4011, hIgnoreBRK, hIgnoreIllegal, hNoWait, hCleanAXY;
 	extern HWND hResetDuty, hDMCPopReducer, hForce4017, hN106PopReducer;
 	extern HWND hFDSPopReducer;
 	extern HWND hInvertCutoff, hInvertCutoffHz, hIgnoreVersion;
+
 	void SetOptions(const NSF_ADVANCEDOPTIONS opt, BYTE ignoreversion);
 	void GetOptions(NSF_ADVANCEDOPTIONS &opt, BYTE &ignoreversion);
-
 	BOOL __stdcall DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 }
 
