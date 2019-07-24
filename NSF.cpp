@@ -85,7 +85,6 @@ t_filestats input_nosofatso::get_file_stats(abort_callback & p_abort)
 void input_nosofatso::decode_initialize(t_uint32 p_subsong, unsigned p_flags, abort_callback & p_abort)
 {
 	m_file->reopen(p_abort);
-	// Equivalent to seek to zero, except it also works on nonseekable streams
 	if (!nsfCore.Initialize())
 		throw exception_out_of_resources();
 	if (nsfCore.SetPlaybackOptions(pri_cfg_nsf_common_option.nSampleRate, pri_cfg_nsf_common_option.nChannels) == 0)
@@ -108,7 +107,6 @@ void input_nosofatso::decode_initialize(t_uint32 p_subsong, unsigned p_flags, ab
 
 bool input_nosofatso::decode_run(audio_chunk & p_chunk, abort_callback & p_abort)
 {
-	// 200 bytes padding, just in case of a little overflow???
 	if (nsfCore.GetSamples(m_p_array, m_buf_size) <= 0)
 		return false;
 	p_chunk.set_data_fixedpoint(m_p_array, m_buf_size, pri_cfg_nsf_common_option.nSampleRate, pri_cfg_nsf_common_option.nChannels, 16,

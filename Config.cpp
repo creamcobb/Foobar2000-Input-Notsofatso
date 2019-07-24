@@ -21,7 +21,6 @@
 #include "NSF.h"
 #define MAKE_FUNCTION_PARAM(x, i) x.nMix[i], x.nVol[i], x.nPan[i], x.nInv[i]
 
-/* native */ /* VRC6 */ /* MMC5 */ /* N106 */ /* VRC7 */ /* FME-07 */ /* FDS */
 #define DEFAULT_MIX { 1,1,1,1,1, 1,1,1, 1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1, 1,1,1,1 }
 #define DEFAULT_INV { 1,1,0,0,0, 1,0,0, 1,1,0, 1,1,0,0,1,1,0,0, 1,1,0,0,1,1, 0,1,0,0 }
 #define DEFAULT_PAN { 0,0,0,0,0, 0,0,0, 0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0 }
@@ -86,7 +85,6 @@ void nosofatso_preferences::apply()
 	ConfigDlg2::GetOptions(cfg_nsf_advanced_option.get_value(), cfg_nsf_common_option.get_value().bIgnoreNSFVersion);
 	for (i = 0; i < 29; i++)
 	{
-		/* Get GUI Config */
 		if (i < 5)
 			CONFIG_GET_CHANNEL_OPTIONS(ChannelsDlg, 0, i, &cfg_nsf_common_option.get_value())
 		else if (i < 8)
@@ -119,14 +117,12 @@ void nosofatso_preferences::reset()
 		mix = cfg_nsf_common_option.get_value().nMix[i];
 		vol = cfg_nsf_common_option.get_value().nVol[i];
 		inv = cfg_nsf_common_option.get_value().nInv[i];
-		/* Check Params*/
 		if (vol < 0)	vol = 0;
 		if (vol > 255)	vol = 255;
 		if (pan < -127)	pan = -127;
 		if (pan > 127)	pan = 127;
 		if (mix != 0)	mix = 1;
 		if (inv != 1)	inv = 0;
-		/* Set GUI Config */
 		if (i < 5)
 			CONFIG_SET_CHANNEL_OPTIONS(ChannelsDlg, 0, i, mix, vol, pan, inv)
 		else if (i < 8)
