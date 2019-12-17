@@ -206,6 +206,7 @@ bool input_nosofatso::g_is_our_path(const char *, const char * p_extension)
 }
 
 static input_factory_t<input_nosofatso> g_input_nosofatso_factory;
+
 DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 \
 "Program: Nintendo Entertainment System Audio Processing Unit Emulator\n"\
@@ -232,10 +233,7 @@ DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 "\n"\
 "You should have received a copy of the GNU General Public License "\
 "along with this program; if not, write to the Free Software "\
-"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111 - 1307  USA\n"\
-);
-
+"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111 - 1307  USA\n");
 DECLARE_FILE_TYPE("NSF Sound Format", "*.FTM;*.NSF;*.NSFE");
-
 // This will prevent users from renaming your component around (important for proper troubleshooter behaviors) or loading multiple instances of it.
 VALIDATE_COMPONENT_FILENAME("foo_input_notsofatso.dll");
