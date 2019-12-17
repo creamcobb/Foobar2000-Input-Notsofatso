@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{23F5A2AC-7A19-4FFF-98DD-06C61437D3D3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>NotSoFatso</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>foo_input_notsofatso</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EXTERN_COMPONENT_OBJECT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\..\foo_sdk;C:\Users\Administrator\Desktop\j0CC-FamiTracker-j0.6.2\src;C:\Users\Administrator\Desktop\wtl10-8356\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <BasicRuntimeChecks />
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pfc_vs2017_release.lib;foobar2000_SDK_vs2017_release.lib;foobar2000_ATL_helpers_vs2017_release.lib;foobar2000_sdk_helpers_vs2017_release.lib;foobar2000_component_client_vs2017_release.lib;shared.lib;comctl32.lib;winmm.lib;0CC-FamiTracker.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>
+      </SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>..\..\foo_sdk\lib;..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile />
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\CN106Wave.cpp" />
+    <ClCompile Include="..\src\Config.cpp" />
+    <ClCompile Include="..\src\CFDSWave.cpp" />
+    <ClCompile Include="..\src\CFME07Wave.cpp" />
+    <ClCompile Include="..\src\CMMC5SquareWave.cpp" />
+    <ClCompile Include="..\src\CSquareWaves.cpp" />
+    <ClCompile Include="..\src\CTNDWaves.cpp" />
+    <ClCompile Include="..\src\CVRC6PulseWave.cpp" />
+    <ClCompile Include="..\src\CVRC6SawWave.cpp" />
+    <ClCompile Include="..\src\NSF.cpp" />
+    <ClCompile Include="..\src\MainDlg.cpp" />
+    <ClCompile Include="..\src\ChannelsDlg.cpp" />
+    <ClCompile Include="..\src\ConfigDlg.cpp" />
+    <ClCompile Include="..\src\FME07Dlg.cpp" />
+    <ClCompile Include="..\src\MMC5Dlg.cpp" />
+    <ClCompile Include="..\src\N106Dlg.cpp" />
+    <ClCompile Include="..\src\VRC6Dlg.cpp" />
+    <ClCompile Include="..\src\VRC7Dlg.cpp" />
+    <ClCompile Include="..\src\MOS6502.cpp" />
+    <ClCompile Include="..\src\CNSFCore.cpp" />
+    <ClCompile Include="..\src\CNSFFile.cpp" />
+    <ClCompile Include="..\src\Wave_VRC7.cpp" />
+    <ClCompile Include="..\src\fmopl.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\CFDSWave.h" />
+    <ClInclude Include="..\src\CVRC6SawWave.h" />
+    <ClInclude Include="..\src\GUI.h" />
+    <ClInclude Include="..\src\CMMC5SquareWave.h" />
+    <ClInclude Include="..\src\NSF.h" />
+    <ClInclude Include="..\src\resource.h" />
+    <ClInclude Include="..\src\CNSFCore.h" />
+    <ClInclude Include="..\src\CNSFFile.h" />
+    <ClInclude Include="..\src\CFME07Wave.h" />
+    <ClInclude Include="..\src\CN106Wave.h" />
+    <ClInclude Include="..\src\CSquareWaves.h" />
+    <ClInclude Include="..\src\CTNDWaves.h" />
+    <ClInclude Include="..\src\CVRC6PulseWave.h" />
+    <ClInclude Include="..\src\fmopl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\src\Resource.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
