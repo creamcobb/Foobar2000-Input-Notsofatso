@@ -25,7 +25,8 @@
 *  -Disch-
 */
 
-/* I made pretty much every file include this header... kinda sloppy.
+/*
+*  I made pretty much every file include this header... kinda sloppy.
 *  feel free to change it if you don't like the compile time.
 */
 
