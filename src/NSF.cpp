@@ -211,14 +211,7 @@ DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 \
 "Program: Nintendo Entertainment System Audio Processing Unit Emulator\n"\
 "Platform: Intel 80386\n"\
-"Programmer: Slick Productions (Disch), Wilbert Lee\n"\
-"\n"\
-"Credits and stuff\n"
-"Disch, Drag - Coding, design and all that good stuff.\n"\
-"Tatsuyuki Satoh, Quietust, Xodnizel - VRC7 Support.\n"\
-"Tzar - That owns.\n"\
-"Brad Taylor, Blargg, Kent Hansen, Miyama, Goroh - For the great sound docs.\n"\
-"Wilbert Lee - FamiTracker Support.\n"\
+"Programmer: Slick Productions (Disch), Drag, Tatsuyuki Satoh, Quietust, Xodnizel, Tzar, Brad Taylor, Blargg, Kent Hansen, Miyama, Goroh, Wilbert Lee\n"\
 "\n"\
 "This program is free software; you can redistribute it and / or modify "\
 "it under the terms of the GNU General Public License as published by "\
