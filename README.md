@@ -1,6 +1,6 @@
 ## Overview
 
-<div align=center><img src="https://github.com/Etercyber/foo_input_notsofatso/blob/master/logo.png" width="400px"/></div>
+<div align=center><img src="https://github.com/Etercyber/foo_input_notsofatso/blob/master/res/logo.png" width="400px"/></div>
 
 > Accurate NSF (Nintendo Sound Format) file player.<br>
 > NotSo Fatso plays standard NSF files, as well as NSFE files. NotSo strives to be as accurate as possible, while still being quick. All expansion chips are emulated.<br>
