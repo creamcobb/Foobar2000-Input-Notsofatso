@@ -25,123 +25,123 @@ class CTNDWaves
 {
 public:
 
-	/*	Triangle			*/
+  /* Triangle   */
 
-	// // // // // // // // // // // // // // // // // /
-	// Programmable Timer
-	TWIN		nTriFreqTimer;
-	int			nTriFreqCount;
+  // // // // // // // // // // // // // // // // // /
+  // Programmable Timer
+  TWIN nTriFreqTimer;
+  int nTriFreqCount;
 
-	// // // // // // // // // // // // // // // // // /
-	// Length Counter
-	BYTE		nTriLengthCount;
-	BYTE		bTriLengthEnabled;
-	BYTE		bTriChannelEnabled;
+  // // // // // // // // // // // // // // // // // /
+  // Length Counter
+  BYTE nTriLengthCount;
+  BYTE bTriLengthEnabled;
+  BYTE bTriChannelEnabled;
 
-	// // // // // // // // // // // // // // // // // /
-	// Linear Counter
-	BYTE		nTriLinearCount;
-	BYTE		nTriLinearLoad;
-	BYTE		bTriLinearHalt;
-	BYTE		bTriLinearControl;
+  // // // // // // // // // // // // // // // // // /
+  // Linear Counter
+  BYTE nTriLinearCount;
+  BYTE nTriLinearLoad;
+  BYTE bTriLinearHalt;
+  BYTE bTriLinearControl;
 
-	// // // // // // // // // // // // // // // // // /
-	// Tri-Step Generator / Output
-	BYTE		nTriStep;
-	BYTE		nTriOutput;
-	BYTE		bTriChannelMix;
-
-
-	/*	Noise				*/
-
-	// // // // // // // // // // // // // // // // // /
-	// Programmable Timer
-	WORD		nNoiseFreqTimer;
-	int			nNoiseFreqCount;
-
-	// // // // // // // // // // // // // // // // // /
-	// Length Counter
-	BYTE		nNoiseLengthCount;
-	BYTE		bNoiseLengthEnabled;
-	BYTE		bNoiseChannelEnabled;
-
-	// // // // // // // // // // // // // // // // // /
-	// Volume / Decay
-	BYTE		nNoiseVolume;
-	BYTE		nNoiseDecayVolume;
-	BYTE		bNoiseDecayEnable;
-	BYTE		bNoiseDecayLoop;
-	BYTE		nNoiseDecayTimer;
-	BYTE		nNoiseDecayCount;
-	BYTE		bNoiseDecayReset;
-
-	// // // // // // // // // // // // // // // // // /
-	// Random Number Generator
-	WORD		nNoiseRandomShift;
-	BYTE		bNoiseRandomMode;			// 1 = 32k, 6 = 93-bit
-	BYTE		bNoiseRandomOut;
-	BYTE		bNoiseChannelMix;
+  // // // // // // // // // // // // // // // // // /
+  // Tri-Step Generator / Output
+  BYTE nTriStep;
+  BYTE nTriOutput;
+  BYTE bTriChannelMix;
 
 
-	/*	DMC					*/
+  /* Noise */
 
-	// // // // // // // // // // // // // // // // // /
-	// Play Mode
-	BYTE		bDMCLoop;
-	BYTE		bDMCIRQEnabled;
-	BYTE		bDMCIRQPending;
+  // // // // // // // // // // // // // // // // // /
+  // Programmable Timer
+  WORD nNoiseFreqTimer;
+  int nNoiseFreqCount;
 
-	// // // // // // // // // // // // // // // // // /
-	// Address / DMA
-	BYTE		nDMCDMABank_Load;
-	WORD		nDMCDMAAddr_Load;
-	BYTE		nDMCDMABank;
-	WORD		nDMCDMAAddr;
-	BYTE*		pDMCDMAPtr[8];
+  // // // // // // // // // // // // // // // // // /
+  // Length Counter
+  BYTE nNoiseLengthCount;
+  BYTE bNoiseLengthEnabled;
+  BYTE bNoiseChannelEnabled;
 
-	// // // // // // // // // // // // // // // // // 
-	// Length / Input
-	WORD		nDMCLength;
-	WORD		nDMCBytesRemaining;
-	BYTE		nDMCDelta;
-	BYTE		nDMCDeltaBit;
-	BYTE		bDMCDeltaSilent;
-	BYTE		nDMCSampleBuffer;
-	BYTE		bDMCSampleBufferEmpty;
+  // // // // // // // // // // // // // // // // // /
+  // Volume / Decay
+  BYTE nNoiseVolume;
+  BYTE nNoiseDecayVolume;
+  BYTE bNoiseDecayEnable;
+  BYTE bNoiseDecayLoop;
+  BYTE nNoiseDecayTimer;
+  BYTE nNoiseDecayCount;
+  BYTE bNoiseDecayReset;
 
-	// // // // // // // // // // // // // // // // // 
-	// Frequency
-	WORD		nDMCFreqTimer;
-	WORD		nDMCFreqCount;
+  // // // // // // // // // // // // // // // // // /
+  // Random Number Generator
+  WORD nNoiseRandomShift;
+  BYTE bNoiseRandomMode; // 1 = 32k, 6 = 93-bit
+  BYTE bNoiseRandomOut;
+  BYTE bNoiseChannelMix;
 
-	// // // // // // // // // // // // // // // // // 
-	// Output
-	BYTE		bDMCActive;
-	BYTE		nDMCOutput;
-	BYTE		bDMCChannelMix;
 
-	/*	All's Output table			*/
-	short*		nOutputTable_L;
-	short*		nOutputTable_R;
-	int			nMixL;
-	int			nMixR;
+  /* DMC  */
 
-	// // // // // // // // // // // // // // // // // /
-	// Inverting
-	BYTE		bInvert;
-	BYTE		bDoInvert;
-	WORD		nInvertFreqCutoff_Noise;
-	WORD		nInvertFreqCutoff_Tri;
-	
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // /
+  // Play Mode
+  BYTE bDMCLoop;
+  BYTE bDMCIRQEnabled;
+  BYTE bDMCIRQPending;
 
-	void ClockMajor();
-	void ClockMinor();
-	int DoTicks(int ticks);
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  // // // // // // // // // // // // // // // // // /
+  // Address / DMA
+  BYTE nDMCDMABank_Load;
+  WORD nDMCDMAAddr_Load;
+  BYTE nDMCDMABank;
+  WORD nDMCDMAAddr;
+  BYTE* pDMCDMAPtr[8];
+
+  // // // // // // // // // // // // // // // // // 
+  // Length / Input
+  WORD nDMCLength;
+  WORD nDMCBytesRemaining;
+  BYTE nDMCDelta;
+  BYTE nDMCDeltaBit;
+  BYTE bDMCDeltaSilent;
+  BYTE nDMCSampleBuffer;
+  BYTE bDMCSampleBufferEmpty;
+
+  // // // // // // // // // // // // // // // // // 
+  // Frequency
+  WORD nDMCFreqTimer;
+  WORD nDMCFreqCount;
+
+  // // // // // // // // // // // // // // // // // 
+  // Output
+  BYTE bDMCActive;
+  BYTE nDMCOutput;
+  BYTE bDMCChannelMix;
+
+  /* All's Output table   */
+  short*  nOutputTable_L;
+  short*  nOutputTable_R;
+  int nMixL;
+  int nMixR;
+
+  // // // // // // // // // // // // // // // // // /
+  // Inverting
+  BYTE bInvert;
+  BYTE bDoInvert;
+  WORD nInvertFreqCutoff_Noise;
+  WORD nInvertFreqCutoff_Tri;
+  
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+
+  void ClockMajor();
+  void ClockMinor();
+  int DoTicks(int ticks);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };

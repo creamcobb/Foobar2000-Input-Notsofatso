@@ -20,95 +20,92 @@
 
 #include "CNSFCore.h"
 
-void CMMC5SquareWave::ClockMajor()		// decay
+void CMMC5SquareWave::ClockMajor()  // decay
 {
-	if (nDecayCount)
-		nDecayCount--;
-	else
-	{
-		nDecayCount = nDecayTimer;
-		if (nDecayVolume)
-			nDecayVolume--;
-		else
-		{
-			if (bDecayLoop)
-				nDecayVolume = 0x0F;
-		}
-
-		if (bDecayEnable)
-			nVolume = nDecayVolume;
-	}
+  if (nDecayCount)
+    nDecayCount--;
+  else
+  {
+    nDecayCount = nDecayTimer;
+    if (nDecayVolume)
+      nDecayVolume--;
+    else
+      if (bDecayLoop)
+        nDecayVolume = 0x0F;
+    if (bDecayEnable)
+      nVolume = nDecayVolume;
+  }
 }
 
-void CMMC5SquareWave::ClockMinor()		// length
+void CMMC5SquareWave::ClockMinor()  // length
 {
-	if (bLengthEnabled && nLengthCount)
-		nLengthCount--;
+  if (bLengthEnabled && nLengthCount)
+    nLengthCount--;
 }
 
 void CMMC5SquareWave::DoTicks(int ticks, BYTE mix)
 {
-	register int mn;
+  register int mn;
 
-	if (nFreqTimer.W < 8) return;
+  if (nFreqTimer.W < 8) return;
 
-	while (ticks)
-	{
-		mn = min(nFreqCount, ticks);
-		ticks -= mn;
+  while (ticks)
+  {
+    mn = min(nFreqCount, ticks);
+    ticks -= mn;
 
-		nFreqCount -= mn;
+    nFreqCount -= mn;
 
-		if (mix && (nDutyCount < nDutyCycle) && nLengthCount)
-		{
-			nMixL += nOutputTable_L[nVolume] * mn;
-			nMixR += nOutputTable_R[nVolume] * (bDoInvert ? -mn : mn);
-		}
+    if (mix && (nDutyCount < nDutyCycle) && nLengthCount)
+    {
+      nMixL += nOutputTable_L[nVolume] * mn;
+      nMixR += nOutputTable_R[nVolume] * (bDoInvert ? -mn : mn);
+    }
 
-		if (!nFreqCount)
-		{
-			nFreqCount = nFreqTimer.W + 1;
-			nDutyCount = (nDutyCount + 1) & 0x0F;
-			if (!nDutyCount)
-			{
-				bDoInvert = bInvert;
-				if (nInvertFreqCutoff < nFreqTimer.W)
-					bDoInvert = 0;
-			}
-		}
-	}
+    if (!nFreqCount)
+    {
+      nFreqCount = nFreqTimer.W + 1;
+      nDutyCount = (nDutyCount + 1) & 0x0F;
+      if (!nDutyCount)
+      {
+        bDoInvert = bInvert;
+        if (nInvertFreqCutoff < nFreqTimer.W)
+          bDoInvert = 0;
+      }
+    }
+  }
 }
 
 void CMMC5SquareWave::Mix_Mono(int& mix, int downsample)
 {
-	mix += (nMixL / downsample);
-	nMixL = 0;
+  mix += (nMixL / downsample);
+  nMixL = 0;
 }
 
 void CMMC5SquareWave::Mix_Stereo(int& mixL, int& mixR, int downsample)
 {
-	mixL += (nMixL / downsample);
-	mixR += (nMixR / downsample);
+  mixL += (nMixL / downsample);
+  mixR += (nMixR / downsample);
 
-	nMixL = nMixR = 0;
+  nMixL = nMixR = 0;
 }
 
 void CMMC5VoiceWave::DoTicks(int ticks)
 {
-	nMixL += nOutputTable_L[nOutput] * ticks;
-	nMixR += nOutputTable_R[nOutput] * (bInvert ? -ticks : ticks);
+  nMixL += nOutputTable_L[nOutput] * ticks;
+  nMixR += nOutputTable_R[nOutput] * (bInvert ? -ticks : ticks);
 }
 
 void CMMC5VoiceWave::Mix_Mono(int& mix, int downsample)
 {
-	mix += (nMixL / downsample);
-	nMixL = 0;
+  mix += (nMixL / downsample);
+  nMixL = 0;
 }
 
 void CMMC5VoiceWave::Mix_Stereo(int& mixL, int& mixR, int downsample)
 {
-	mixL += (nMixL / downsample);
-	mixR += (nMixR / downsample);
+  mixL += (nMixL / downsample);
+  mixR += (nMixR / downsample);
 
-	nMixL = nMixR = 0;
+  nMixL = nMixR = 0;
 }

@@ -22,46 +22,46 @@ class CVRC6PulseWave
 {
 public:
 
-	// // // // // // // // // // // // // // // // // /
-	// Frequency Control
-	TWIN		nFreqTimer;
-	int			nFreqCount;
-	int			nFreqInvHalt;
+  // // // // // // // // // // // // // // // // // /
+  // Frequency Control
+  TWIN nFreqTimer;
+  int nFreqCount;
+  int nFreqInvHalt;
 
-	// // // // // // // // // // // // // // // // // /
-	// Flags
-	BYTE		bChannelEnabled;
-	BYTE		bDigitized;
+  // // // // // // // // // // // // // // // // // /
+  // Flags
+  BYTE bChannelEnabled;
+  BYTE bDigitized;
 
-	// // // // // // // // // // // // // // // // // /
-	// Volume
-	BYTE		nVolume;
+  // // // // // // // // // // // // // // // // // /
+  // Volume
+  BYTE nVolume;
 
-	// // // // // // // // // // // // // // // // // /
-	// Duty Cycle
-	BYTE		nDutyCycle;
-	BYTE		nDutyCount;
+  // // // // // // // // // // // // // // // // // /
+  // Duty Cycle
+  BYTE nDutyCycle;
+  BYTE nDutyCount;
 
-	// // // // // // // // // // // // // // // // // /
-	// Output and Downsampling
-	short		nOutputTable_L[0x10];
-	short		nOutputTable_R[0x10];
-	int			nMixL;
-	int			nMixR;
+  // // // // // // // // // // // // // // // // // /
+  // Output and Downsampling
+  short nOutputTable_L[0x10];
+  short nOutputTable_R[0x10];
+  int nMixL;
+  int nMixR;
 
-	// // // // // // // // // // // // // // // // // /
-	// Inverting
-	BYTE		bInvert;
-	BYTE		bDoInvert;
-	WORD		nInvertFreqCutoff;
+  // // // // // // // // // // // // // // // // // /
+  // Inverting
+  BYTE bInvert;
+  BYTE bDoInvert;
+  WORD nInvertFreqCutoff;
 
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
 
-	void DoTicks(int ticks, BYTE mix);
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  void DoTicks(int ticks, BYTE mix);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };

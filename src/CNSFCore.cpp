@@ -27,2289 +27,2287 @@
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 // 
-// 		A few macros
+//   A few macros
 // 
 
-#define CLOCK_MAJOR() {	mWave_Squares.ClockMajor(); mWave_TND.ClockMajor();			\
-	if(nExternalSound & EXTSOUND_MMC5) { mWave_MMC5Square[0].ClockMajor(); mWave_MMC5Square[1].ClockMajor(); }}
-#define CLOCK_MINOR() {	mWave_Squares.ClockMinor(); mWave_TND.ClockMinor();			\
-	if(nExternalSound & EXTSOUND_MMC5) { mWave_MMC5Square[0].ClockMinor(); mWave_MMC5Square[1].ClockMinor(); }}
+#define CLOCK_MAJOR() {  mWave_Squares.ClockMajor(); mWave_TND.ClockMajor();  \
+  if(nExternalSound & EXTSOUND_MMC5) { mWave_MMC5Square[0].ClockMajor(); mWave_MMC5Square[1].ClockMajor(); }}
+#define CLOCK_MINOR() {  mWave_Squares.ClockMinor(); mWave_TND.ClockMinor();  \
+  if(nExternalSound & EXTSOUND_MMC5) { mWave_MMC5Square[0].ClockMinor(); mWave_MMC5Square[1].ClockMinor(); }}
+
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 // 
-// 		Lookup tables
+//   Lookup tables
 // 
 
-const WORD	DMC_FREQ_TABLE[2][0x10] = {
-	// NTSC
-	{0x1AC,0x17C,0x154,0x140,0x11E,0x0FE,0x0E2,0x0D6,0x0BE,0x0A0,0x08E,0x080,0x06A,0x054,0x048,0x036},
-	// PAL
-	{0x18C,0x160,0x13A,0x128,0x108,0x0EA,0x0D0,0x0C6,0x0B0,0x094,0x082,0x076,0x062,0x04E,0x042,0x032}
+const WORD DMC_FREQ_TABLE[2][0x10] = {
+  // NTSC
+  { 0x1AC, 0x17C, 0x154, 0x140, 0x11E, 0x0FE, 0x0E2, 0x0D6, 0x0BE, 0x0A0, 0x08E, 0x080, 0x06A, 0x054, 0x048, 0x036 },
+  // PAL
+  { 0x18C, 0x160, 0x13A, 0x128, 0x108, 0x0EA, 0x0D0, 0x0C6, 0x0B0, 0x094, 0x082, 0x076, 0x062, 0x04E, 0x042, 0x032 }
 };
 
-const BYTE DUTY_CYCLE_TABLE[4] = { 2,4,8,12 };
+const BYTE DUTY_CYCLE_TABLE[4] = { 2, 4, 8, 12 };
 
 const BYTE LENGTH_COUNTER_TABLE[0x20] = {
-0x0A,0xFE,0x14,0x02,0x28,0x04,0x50,0x06,0xA0,0x08,0x3C,0x0A,0x0E,0x0C,0x1A,0x0E,
-0x0C,0x10,0x18,0x12,0x30,0x14,0x60,0x16,0xC0,0x18,0x48,0x1A,0x10,0x1C,0x20,0x1E };
+  0x0A, 0xFE, 0x14, 0x02, 0x28, 0x04, 0x50, 0x06, 0xA0, 0x08, 0x3C, 0x0A, 0x0E, 0x0C, 0x1A, 0x0E,
+  0x0C, 0x10, 0x18, 0x12, 0x30, 0x14, 0x60, 0x16, 0xC0, 0x18, 0x48, 0x1A, 0x10, 0x1C, 0x20, 0x1E };
 
 const WORD NOISE_FREQ_TABLE[0x10] = {
-0x004,0x008,0x010,0x020,0x040,0x060,0x080,0x0A0,0x0CA,0x0FE,0x17C,0x1FC,0x2FA,0x3F8,0x7F2,0xFE4 };
+  0x004, 0x008, 0x010, 0x020, 0x040, 0x060, 0x080, 0x0A0, 0x0CA, 0x0FE, 0x17C, 0x1FC, 0x2FA, 0x3F8, 0x7F2, 0xFE4 };
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 // 
-// 		Read Memory Procs
+//   Read Memory Procs
 // 
 
 BYTE CNSFCore::ReadMemory_pAPU(WORD a)
 {
-	EmulateAPU(1);
+  EmulateAPU(1);
 
-	if (a == 0x4015)
-	{
-		BYTE ret = 0;
-		if (mWave_Squares.nLengthCount[0])		ret |= 0x01;
-		if (mWave_Squares.nLengthCount[1])		ret |= 0x02;
-		if (mWave_TND.nTriLengthCount)			ret |= 0x04;
-		if (mWave_TND.nNoiseLengthCount)			ret |= 0x08;
-		if (mWave_TND.nDMCBytesRemaining)		ret |= 0x10;
+  if (a == 0x4015)
+  {
+    BYTE ret = 0;
+    if (mWave_Squares.nLengthCount[0])  ret |= 0x01;
+    if (mWave_Squares.nLengthCount[1])  ret |= 0x02;
+    if (mWave_TND.nTriLengthCount)  ret |= 0x04;
+    if (mWave_TND.nNoiseLengthCount)  ret |= 0x08;
+    if (mWave_TND.nDMCBytesRemaining)  ret |= 0x10;
 
-		if (bFrameIRQPending)					ret |= 0x40;
-		if (mWave_TND.bDMCIRQPending)			ret |= 0x80;
+    if (bFrameIRQPending)  ret |= 0x40;
+    if (mWave_TND.bDMCIRQPending)  ret |= 0x80;
 
-		bFrameIRQPending = 0;
-		return ret;
-	}
+    bFrameIRQPending = 0;
+    return ret;
+  }
 
-	if (!(nExternalSound & EXTSOUND_FDS))		return 0x40;
-	if (bPALMode)								return 0x40; // no expansion sound on PAL
+  if (!(nExternalSound & EXTSOUND_FDS))  return 0x40;
+  if (bPALMode)  return 0x40; // no expansion sound on PAL
 
-	if ((a >= 0x4040) && (a <= 0x407F))
-		return mWave_FDS.nWaveTable[a & 0x3F] | 0x40;
-	if (a == 0x4090)
-		return (mWave_FDS.nVolEnv_Gain & 0x3F) | 0x40;
-	if (a == 0x4092)
-		return (mWave_FDS.nSweep_Gain & 0x3F) | 0x40;
+  if ((a >= 0x4040) && (a <= 0x407F))
+    return mWave_FDS.nWaveTable[a & 0x3F] | 0x40;
+  if (a == 0x4090)
+    return (mWave_FDS.nVolEnv_Gain & 0x3F) | 0x40;
+  if (a == 0x4092)
+    return (mWave_FDS.nSweep_Gain & 0x3F) | 0x40;
 
-	return 0x40;
+  return 0x40;
 }
 
 BYTE CNSFCore::ReadMemory_N106(WORD a)
 {
-	if (a != 0x4800)
-		return ReadMemory_pAPU(a);
+  if (a != 0x4800)
+    return ReadMemory_pAPU(a);
 
-	BYTE ret = mWave_N106.nRAM[(mWave_N106.nCurrentAddress << 1)] | (mWave_N106.nRAM[(mWave_N106.nCurrentAddress << 1) + 1] << 4);
+  BYTE ret = mWave_N106.nRAM[(mWave_N106.nCurrentAddress << 1)] | (mWave_N106.nRAM[(mWave_N106.nCurrentAddress << 1) + 1] << 4);
 
-	if (mWave_N106.bAutoIncrement)
-		mWave_N106.nCurrentAddress = (mWave_N106.nCurrentAddress + 1) & 0x7F;
+  if (mWave_N106.bAutoIncrement)
+    mWave_N106.nCurrentAddress = (mWave_N106.nCurrentAddress + 1) & 0x7F;
 
-	return ret;
+  return ret;
 }
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 // 
-// 		Write Memory Procs
+//   Write Memory Procs
 // 
 
 void CNSFCore::WriteMemory_ExRAM(WORD a, BYTE v)
 {
-	if (a < 0x5FF6)				// Invalid
-		return;
+  if (a < 0x5FF6)  // Invalid
+    return;
 
-	a -= 0x5FF6;
+  a -= 0x5FF6;
 
-	// Swap out banks
+  // Swap out banks
 
-	EmulateAPU(1);
-	if (v >= nROMBankCount)		// stop it from swapping to a bank that doesn't exist
-		v = 0;
+  EmulateAPU(1);
+  if (v >= nROMBankCount)  // Stop it from swapping to a bank that doesn't exist
+    v = 0;
 
-	pROM[a] = pROM_Full + (v << 12);
+  pROM[a] = pROM_Full + (v << 12);
 
-	// Update the DMC's DMA pointer, as well
-	if (a >= 2)
-		mWave_TND.pDMCDMAPtr[a - 2] = pROM[a];
+  // Update the DMC's DMA pointer, as well
+  if (a >= 2)
+    mWave_TND.pDMCDMAPtr[a - 2] = pROM[a];
 }
 
 void CNSFCore::WriteMemory_pAPU(WORD a, BYTE v)
 {
-	EmulateAPU(1);
-	if (a <= 0x4003)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Square 1
-		case 0x4000:
-			mWave_Squares.nDutyCycle[0] = DUTY_CYCLE_TABLE[v >> 6];
-			mWave_Squares.bLengthEnabled[0] = !(mWave_Squares.bDecayLoop[0] = (v & 0x20));
-			mWave_Squares.bDecayEnable[0] = !(v & 0x10);
-			mWave_Squares.nDecayTimer[0] = (v & 0x0F);
+  EmulateAPU(1);
+  if (a <= 0x4003)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Square 1
+    case 0x4000:
+      mWave_Squares.nDutyCycle[0] = DUTY_CYCLE_TABLE[v >> 6];
+      mWave_Squares.bLengthEnabled[0] = !(mWave_Squares.bDecayLoop[0] = (v & 0x20));
+      mWave_Squares.bDecayEnable[0] = !(v & 0x10);
+      mWave_Squares.nDecayTimer[0] = (v & 0x0F);
 
-			if (mWave_Squares.bDecayEnable[0])
-				mWave_Squares.nVolume[0] = mWave_Squares.nDecayVolume[0];
-			else
-				mWave_Squares.nVolume[0] = mWave_Squares.nDecayTimer[0];
+      if (mWave_Squares.bDecayEnable[0])
+        mWave_Squares.nVolume[0] = mWave_Squares.nDecayVolume[0];
+      else
+        mWave_Squares.nVolume[0] = mWave_Squares.nDecayTimer[0];
 
-			break;
+      break;
 
-		case 0x4001:
-			mWave_Squares.bSweepEnable[0] = (v & 0x80);
-			mWave_Squares.nSweepTimer[0] = (v & 0x70) >> 4;
-			mWave_Squares.bSweepMode[0] = v & 0x08;
-			mWave_Squares.nSweepShift[0] = v & 0x07;
-			// 		if (mWave_Squares.nSweepCount[0])	// Drag
-			// 			mWave_Squares.nSweepCount[0] = mWave_Squares.nSweepTimer[0]; // Drag
-			mWave_Squares.bSweepReset[0] = 1;
-			mWave_Squares.CheckSweepForcedSilence(0);
-			break;
+    case 0x4001:
+      mWave_Squares.bSweepEnable[0] = (v & 0x80);
+      mWave_Squares.nSweepTimer[0] = (v & 0x70) >> 4;
+      mWave_Squares.bSweepMode[0] = v & 0x08;
+      mWave_Squares.nSweepShift[0] = v & 0x07;
+      //   if (mWave_Squares.nSweepCount[0])  // Drag
+      //  mWave_Squares.nSweepCount[0] = mWave_Squares.nSweepTimer[0]; // Drag
+      mWave_Squares.bSweepReset[0] = 1;
+      mWave_Squares.CheckSweepForcedSilence(0);
+      break;
 
-		case 0x4002:
-			mWave_Squares.nFreqTimer[0].B.l = v;
-			mWave_Squares.CheckSweepForcedSilence(0);
-			break;
+    case 0x4002:
+      mWave_Squares.nFreqTimer[0].B.l = v;
+      mWave_Squares.CheckSweepForcedSilence(0);
+      break;
 
-		case 0x4003:
-			mWave_Squares.nFreqTimer[0].B.h = v & 0x07;
-			mWave_Squares.CheckSweepForcedSilence(0);
+    case 0x4003:
+      mWave_Squares.nFreqTimer[0].B.h = v & 0x07;
+      mWave_Squares.CheckSweepForcedSilence(0);
 
-			// 		mWave_Squares.nDecayVolume[0] = 0x0F;
-			// 		mWave_Squares.nDecayCount[0] = mWave_Squares.nDecayTimer[0] + 1;	// Drag
-			// 		if(mWave_Squares.bDecayEnable[0])
-			// 			mWave_Squares.nVolume[0] = mWave_Squares.nDecayVolume[0];
+      //   mWave_Squares.nDecayVolume[0] = 0x0F;
+      //   mWave_Squares.nDecayCount[0] = mWave_Squares.nDecayTimer[0] + 1; // Drag
+      //   if(mWave_Squares.bDecayEnable[0])
+      //  mWave_Squares.nVolume[0] = mWave_Squares.nDecayVolume[0];
 
-			mWave_Squares.bDecayReset[0] = 1;	// Drag
+      mWave_Squares.bDecayReset[0] = 1; // Drag
 
-			if (mWave_Squares.bChannelEnabled[0])
-				mWave_Squares.nLengthCount[0] = LENGTH_COUNTER_TABLE[v >> 3];
+      if (mWave_Squares.bChannelEnabled[0])
+        mWave_Squares.nLengthCount[0] = LENGTH_COUNTER_TABLE[v >> 3];
 
-			if (bResetDuty)
-				mWave_Squares.nDutyCount[0] = 0;
-			break;
-		}
-	}
-	else if (a <= 0x4007)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Square 2
-		case 0x4004:
-			mWave_Squares.nDutyCycle[1] = DUTY_CYCLE_TABLE[v >> 6];
-			mWave_Squares.bLengthEnabled[1] = !(mWave_Squares.bDecayLoop[1] = (v & 0x20));
-			mWave_Squares.bDecayEnable[1] = !(v & 0x10);
-			mWave_Squares.nDecayTimer[1] = (v & 0x0F);
+      if (bResetDuty)
+        mWave_Squares.nDutyCount[0] = 0;
+      break;
+    }
+  }
+  else if (a <= 0x4007)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Square 2
+    case 0x4004:
+      mWave_Squares.nDutyCycle[1] = DUTY_CYCLE_TABLE[v >> 6];
+      mWave_Squares.bLengthEnabled[1] = !(mWave_Squares.bDecayLoop[1] = (v & 0x20));
+      mWave_Squares.bDecayEnable[1] = !(v & 0x10);
+      mWave_Squares.nDecayTimer[1] = (v & 0x0F);
 
-			if (mWave_Squares.bDecayEnable[1])
-				mWave_Squares.nVolume[1] = mWave_Squares.nDecayVolume[1];
-			else
-				mWave_Squares.nVolume[1] = mWave_Squares.nDecayTimer[1];
-			break;
+      if (mWave_Squares.bDecayEnable[1])
+        mWave_Squares.nVolume[1] = mWave_Squares.nDecayVolume[1];
+      else
+        mWave_Squares.nVolume[1] = mWave_Squares.nDecayTimer[1];
+      break;
 
-		case 0x4005:
-			mWave_Squares.bSweepEnable[1] = (v & 0x80);
-			mWave_Squares.nSweepTimer[1] = (v & 0x70) >> 4;
-			mWave_Squares.bSweepMode[1] = v & 0x08;
-			mWave_Squares.nSweepShift[1] = v & 0x07;
-			// 		if (mWave_Squares.nSweepCount[1])	// Drag
-			// 			mWave_Squares.nSweepCount[1] = mWave_Squares.nSweepTimer[1]; // Drag
-			mWave_Squares.bSweepReset[1] = 1;
-			mWave_Squares.CheckSweepForcedSilence(1);
-			break;
+    case 0x4005:
+      mWave_Squares.bSweepEnable[1] = (v & 0x80);
+      mWave_Squares.nSweepTimer[1] = (v & 0x70) >> 4;
+      mWave_Squares.bSweepMode[1] = v & 0x08;
+      mWave_Squares.nSweepShift[1] = v & 0x07;
+      //   if (mWave_Squares.nSweepCount[1])  // Drag
+      //  mWave_Squares.nSweepCount[1] = mWave_Squares.nSweepTimer[1]; // Drag
+      mWave_Squares.bSweepReset[1] = 1;
+      mWave_Squares.CheckSweepForcedSilence(1);
+      break;
 
-		case 0x4006:
-			mWave_Squares.nFreqTimer[1].B.l = v;
-			mWave_Squares.CheckSweepForcedSilence(1);
-			break;
+    case 0x4006:
+      mWave_Squares.nFreqTimer[1].B.l = v;
+      mWave_Squares.CheckSweepForcedSilence(1);
+      break;
 
-		case 0x4007:
-			mWave_Squares.nFreqTimer[1].B.h = v & 0x07;
-			mWave_Squares.CheckSweepForcedSilence(1);
+    case 0x4007:
+      mWave_Squares.nFreqTimer[1].B.h = v & 0x07;
+      mWave_Squares.CheckSweepForcedSilence(1);
 
-			// 		mWave_Squares.nDecayVolume[1] = 0x0F;
-			// 		mWave_Squares.nDecayCount[1] = mWave_Squares.nDecayTimer[1] + 1;	// Drag
-			// 		if(mWave_Squares.bDecayEnable[1])
-			// 			mWave_Squares.nVolume[1] = mWave_Squares.nDecayVolume[1];
+      //   mWave_Squares.nDecayVolume[1] = 0x0F;
+      //   mWave_Squares.nDecayCount[1] = mWave_Squares.nDecayTimer[1] + 1; // Drag
+      //   if(mWave_Squares.bDecayEnable[1])
+      //  mWave_Squares.nVolume[1] = mWave_Squares.nDecayVolume[1];
 
-			mWave_Squares.bDecayReset[1] = 1;	// Drag
+      mWave_Squares.bDecayReset[1] = 1; // Drag
 
-			if (mWave_Squares.bChannelEnabled[1])
-				mWave_Squares.nLengthCount[1] = LENGTH_COUNTER_TABLE[v >> 3];
+      if (mWave_Squares.bChannelEnabled[1])
+        mWave_Squares.nLengthCount[1] = LENGTH_COUNTER_TABLE[v >> 3];
 
-			if (bResetDuty)
-				mWave_Squares.nDutyCount[1] = 0;
-			break;
-		}
-	}
-	else if (a <= 0x400B)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Triangle
-		case 0x4008:
-			mWave_TND.nTriLinearLoad = v & 0x7F;
-			mWave_TND.bTriLinearControl = v & 0x80;
-			// Disch has had this fix ready for a long time, but he was too lazy to add it.
-			mWave_TND.bTriLengthEnabled = !(v & 0x80);
-			break;
+      if (bResetDuty)
+        mWave_Squares.nDutyCount[1] = 0;
+      break;
+    }
+  }
+  else if (a <= 0x400B)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Triangle
+    case 0x4008:
+      mWave_TND.nTriLinearLoad = v & 0x7F;
+      mWave_TND.bTriLinearControl = v & 0x80;
+      // Disch has had this fix ready for a long time, but he was too lazy to add it.
+      mWave_TND.bTriLengthEnabled = !(v & 0x80);
+      break;
 
-		case 0x400A:
-			mWave_TND.nTriFreqTimer.B.l = v;
-			break;
+    case 0x400A:
+      mWave_TND.nTriFreqTimer.B.l = v;
+      break;
 
-		case 0x400B:
-			mWave_TND.nTriFreqTimer.B.h = v & 0x07;
-			mWave_TND.bTriLinearHalt = 1;
+    case 0x400B:
+      mWave_TND.nTriFreqTimer.B.h = v & 0x07;
+      mWave_TND.bTriLinearHalt = 1;
 
-			if (mWave_TND.bTriChannelEnabled)
-				mWave_TND.nTriLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
-			break;
-		}
-	}
-	else if (a <= 0x400F)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Noise
-		case 0x400C:
-			mWave_TND.bNoiseLengthEnabled = !(mWave_TND.bNoiseDecayLoop = (v & 0x20));
-			mWave_TND.bNoiseDecayEnable = !(v & 0x10);
-			mWave_TND.nNoiseDecayTimer = (v & 0x0F);
+      if (mWave_TND.bTriChannelEnabled)
+        mWave_TND.nTriLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
+      break;
+    }
+  }
+  else if (a <= 0x400F)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Noise
+    case 0x400C:
+      mWave_TND.bNoiseLengthEnabled = !(mWave_TND.bNoiseDecayLoop = (v & 0x20));
+      mWave_TND.bNoiseDecayEnable = !(v & 0x10);
+      mWave_TND.nNoiseDecayTimer = (v & 0x0F);
 
-			if (mWave_TND.bNoiseDecayEnable)
-				mWave_TND.nNoiseVolume = mWave_TND.nNoiseDecayVolume;
-			else
-				mWave_TND.nNoiseVolume = mWave_TND.nNoiseDecayTimer;
-			break;
+      if (mWave_TND.bNoiseDecayEnable)
+        mWave_TND.nNoiseVolume = mWave_TND.nNoiseDecayVolume;
+      else
+        mWave_TND.nNoiseVolume = mWave_TND.nNoiseDecayTimer;
+      break;
 
-		case 0x400E:
-			mWave_TND.nNoiseFreqTimer = NOISE_FREQ_TABLE[v & 0x0F];
-			mWave_TND.bNoiseRandomMode = (v & 0x80) ? 6 : 1;
-			break;
+    case 0x400E:
+      mWave_TND.nNoiseFreqTimer = NOISE_FREQ_TABLE[v & 0x0F];
+      mWave_TND.bNoiseRandomMode = (v & 0x80) ? 6 : 1;
+      break;
 
-		case 0x400F:
-			if (mWave_TND.bNoiseChannelEnabled)
-				mWave_TND.nNoiseLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
+    case 0x400F:
+      if (mWave_TND.bNoiseChannelEnabled)
+        mWave_TND.nNoiseLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
 
-			// 		mWave_TND.nNoiseDecayVolume = 0x0F;
-			// 		mWave_TND.nNoiseDecayCount = mWave_TND.nNoiseDecayTimer + 1;	// Drag
-			// 		if(mWave_TND.bNoiseDecayEnable)
-			// 			mWave_TND.nNoiseVolume = 0x0F;
+      //   mWave_TND.nNoiseDecayVolume = 0x0F;
+      //   mWave_TND.nNoiseDecayCount = mWave_TND.nNoiseDecayTimer + 1; // Drag
+      //   if(mWave_TND.bNoiseDecayEnable)
+      //  mWave_TND.nNoiseVolume = 0x0F;
 
-			mWave_TND.bNoiseDecayReset = 1;
-			break;
-		}
-	}
-	else if (a <= 0x4013)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// DMC
-		case 0x4010:
-			mWave_TND.bDMCLoop = v & 0x40;
-			mWave_TND.bDMCIRQEnabled = v & 0x80;
-			if (!mWave_TND.bDMCIRQEnabled)
-				mWave_TND.bDMCIRQPending = 0;		// IRQ can't be pending if it's disabled
+      mWave_TND.bNoiseDecayReset = 1;
+      break;
+    }
+  }
+  else if (a <= 0x4013)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // DMC
+    case 0x4010:
+      mWave_TND.bDMCLoop = v & 0x40;
+      mWave_TND.bDMCIRQEnabled = v & 0x80;
+      if (!mWave_TND.bDMCIRQEnabled)
+        mWave_TND.bDMCIRQPending = 0; // IRQ can't be pending if it's disabled
 
-			mWave_TND.nDMCFreqTimer = DMC_FREQ_TABLE[bPALMode][v & 0x0F];
-			break;
+      mWave_TND.nDMCFreqTimer = DMC_FREQ_TABLE[bPALMode][v & 0x0F];
+      break;
 
-		case 0x4011:
-			if (bIgnore4011Writes)
-				break;
-			v &= 0x7F;
-			if (bDMCPopReducer)
-			{
-				if (bDMCPop_SamePlay)
-					mWave_TND.nDMCOutput = v;
-				else
-				{
-					if (bDMCPop_Skip)
-					{
-						bDMCPop_Skip = 0;
-						break;
-					}
-					if (nDMCPop_Prev == v) break;
-					if (mWave_TND.nDMCOutput == v) break;
-					mWave_TND.nDMCOutput = nDMCPop_Prev;
-					nDMCPop_Prev = v;
-					bDMCPop_SamePlay = 1;
-				}
-			}
-			else
-				mWave_TND.nDMCOutput = v;
-			break;
+    case 0x4011:
+      if (bIgnore4011Writes)
+        break;
+      v &= 0x7F;
+      if (bDMCPopReducer)
+      {
+        if (bDMCPop_SamePlay)
+          mWave_TND.nDMCOutput = v;
+        else
+        {
+          if (bDMCPop_Skip)
+          {
+            bDMCPop_Skip = 0;
+            break;
+          }
+          if (nDMCPop_Prev == v) break;
+          if (mWave_TND.nDMCOutput == v) break;
+          mWave_TND.nDMCOutput = nDMCPop_Prev;
+          nDMCPop_Prev = v;
+          bDMCPop_SamePlay = 1;
+        }
+      }
+      else
+        mWave_TND.nDMCOutput = v;
+      break;
 
-		case 0x4012:
-			mWave_TND.nDMCDMABank_Load = (v >> 6) | 0x04;
-			mWave_TND.nDMCDMAAddr_Load = (v << 6) & 0x0FFF;
-			break;
+    case 0x4012:
+      mWave_TND.nDMCDMABank_Load = (v >> 6) | 0x04;
+      mWave_TND.nDMCDMAAddr_Load = (v << 6) & 0x0FFF;
+      break;
 
-		case 0x4013:
-			mWave_TND.nDMCLength = (v << 4) + 1;
-			break;
-		}
-	}
-	else if (a >= 0x4015 && a <= 0x4017)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// All / General Purpose
-		case 0x4015:
-			mWave_TND.bDMCIRQPending = 0;
+    case 0x4013:
+      mWave_TND.nDMCLength = (v << 4) + 1;
+      break;
+    }
+  }
+  else if (a >= 0x4015 && a <= 0x4017)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // All / General Purpose
+    case 0x4015:
+      mWave_TND.bDMCIRQPending = 0;
 
-			if (v & 0x01) { mWave_Squares.bChannelEnabled[0] = 1; }
-			else { mWave_Squares.bChannelEnabled[0] = mWave_Squares.nLengthCount[0] = 0; }
-			if (v & 0x02) { mWave_Squares.bChannelEnabled[1] = 1; }
-			else { mWave_Squares.bChannelEnabled[1] = mWave_Squares.nLengthCount[1] = 0; }
-			if (v & 0x04) { mWave_TND.bTriChannelEnabled = 1; }
-			else { mWave_TND.bTriChannelEnabled = mWave_TND.nTriLengthCount = 0; }
-			if (v & 0x08) { mWave_TND.bNoiseChannelEnabled = 1; }
-			else { mWave_TND.bNoiseChannelEnabled = mWave_TND.nNoiseLengthCount = 0; }
+      if (v & 0x01) { mWave_Squares.bChannelEnabled[0] = 1; }
+      else { mWave_Squares.bChannelEnabled[0] = mWave_Squares.nLengthCount[0] = 0; }
+      if (v & 0x02) { mWave_Squares.bChannelEnabled[1] = 1; }
+      else { mWave_Squares.bChannelEnabled[1] = mWave_Squares.nLengthCount[1] = 0; }
+      if (v & 0x04) { mWave_TND.bTriChannelEnabled = 1; }
+      else { mWave_TND.bTriChannelEnabled = mWave_TND.nTriLengthCount = 0; }
+      if (v & 0x08) { mWave_TND.bNoiseChannelEnabled = 1; }
+      else { mWave_TND.bNoiseChannelEnabled = mWave_TND.nNoiseLengthCount = 0; }
 
-			if (v & 0x10)
-			{
-				if (!mWave_TND.nDMCBytesRemaining)
-				{
-					bDMCPop_Skip = 1;
-					mWave_TND.nDMCDMAAddr = mWave_TND.nDMCDMAAddr_Load;
-					mWave_TND.nDMCDMABank = mWave_TND.nDMCDMABank_Load;
-					mWave_TND.nDMCBytesRemaining = mWave_TND.nDMCLength;
-					mWave_TND.bDMCActive = 1;
-				}
-			}
-			else
-				mWave_TND.nDMCBytesRemaining = 0;
-			break;
+      if (v & 0x10)
+      {
+        if (!mWave_TND.nDMCBytesRemaining)
+        {
+          bDMCPop_Skip = 1;
+          mWave_TND.nDMCDMAAddr = mWave_TND.nDMCDMAAddr_Load;
+          mWave_TND.nDMCDMABank = mWave_TND.nDMCDMABank_Load;
+          mWave_TND.nDMCBytesRemaining = mWave_TND.nDMCLength;
+          mWave_TND.bDMCActive = 1;
+        }
+      }
+      else
+        mWave_TND.nDMCBytesRemaining = 0;
+      break;
 
-		case 0x4017:
-			bFrameIRQEnabled = !(v & 0x40);
-			bFrameIRQPending = 0;
-			nFrameCounter = 0;
-			nFrameCounterMax = (v & 0x80) ? 4 : 3;
-			if (v & 0x80)
-				fTicksUntilNextFrame = 1;
-			else
-				fTicksUntilNextFrame = (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
-			// 		fTicksUntilNextFrame = (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
-			// 		if(v & 0x80) {
-			// 			CLOCK_MAJOR();
-			// 			CLOCK_MINOR();
-			// 			nFrameCounter++;
-			// 		}
+    case 0x4017:
+      bFrameIRQEnabled = !(v & 0x40);
+      bFrameIRQPending = 0;
+      nFrameCounter = 0;
+      nFrameCounterMax = (v & 0x80) ? 4 : 3;
+      if (v & 0x80)
+        fTicksUntilNextFrame = 1;
+      else
+        fTicksUntilNextFrame = (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
+      //   fTicksUntilNextFrame = (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
+      //   if(v & 0x80) {
+      //  CLOCK_MAJOR();
+      //  CLOCK_MINOR();
+      //  nFrameCounter++;
+      //   }
 
-			break;
-		}
+      break;
+    }
 
-		if (!(nExternalSound & EXTSOUND_FDS))		return;
-		if (bPALMode)								return;	// No expansion sound on PAL
+    if (!(nExternalSound & EXTSOUND_FDS))  return;
+    if (bPALMode)  return; // No expansion sound on PAL
 
-	}
+  }
 
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
-	// FDS Sound registers
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
+  // FDS Sound registers
 
-	if (a < 0x4040)		return;
+  if (a < 0x4040)  return;
 
-	// wave table
-	if (a <= 0x407F)
-	{
-		if (mWave_FDS.bWaveWrite)
-			mWave_FDS.nWaveTable[a - 0x4040] = v;
-	}
-	else if (a <= 0x4085)
-	{
-		switch (a)
-		{
-		case 0x4080:
-			mWave_FDS.nVolEnv_Mode = (v >> 6);
-			if (v & 0x80)
-			{
-				mWave_FDS.nVolEnv_Gain = v & 0x3F;
-				if (!mWave_FDS.nMainAddr)
-				{
-					if (mWave_FDS.nVolEnv_Gain < 0x20)
-						mWave_FDS.nVolume = mWave_FDS.nVolEnv_Gain;
-					else
-						mWave_FDS.nVolume = 0x20;
-				}
-			}
-			mWave_FDS.nVolEnv_Decay = v & 0x3F;
-			mWave_FDS.nVolEnv_Timer = ((mWave_FDS.nVolEnv_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
+  // wave table
+  if (a <= 0x407F)
+  {
+    if (mWave_FDS.bWaveWrite)
+      mWave_FDS.nWaveTable[a - 0x4040] = v;
+  }
+  else if (a <= 0x4085)
+  {
+    switch (a)
+    {
+    case 0x4080:
+      mWave_FDS.nVolEnv_Mode = (v >> 6);
+      if (v & 0x80)
+      {
+        mWave_FDS.nVolEnv_Gain = v & 0x3F;
+        if (!mWave_FDS.nMainAddr)
+        {
+          if (mWave_FDS.nVolEnv_Gain < 0x20)
+            mWave_FDS.nVolume = mWave_FDS.nVolEnv_Gain;
+          else
+            mWave_FDS.nVolume = 0x20;
+        }
+      }
+      mWave_FDS.nVolEnv_Decay = v & 0x3F;
+      mWave_FDS.nVolEnv_Timer = ((mWave_FDS.nVolEnv_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
 
-			mWave_FDS.bVolEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(v & 0x80);
-			break;
+      mWave_FDS.bVolEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(v & 0x80);
+      break;
 
-		case 0x4082:
-			mWave_FDS.nFreq.B.l = v;
-			mWave_FDS.bMain_On = mWave_FDS.nFreq.W && mWave_FDS.bEnabled && !mWave_FDS.bWaveWrite;
-			break;
+    case 0x4082:
+      mWave_FDS.nFreq.B.l = v;
+      mWave_FDS.bMain_On = mWave_FDS.nFreq.W && mWave_FDS.bEnabled && !mWave_FDS.bWaveWrite;
+      break;
 
-		case 0x4083:
-			mWave_FDS.bEnabled = !(v & 0x80);
-			mWave_FDS.bEnvelopeEnable = !(v & 0x40);
-			if (v & 0x80)
-			{
-				if (mWave_FDS.nVolEnv_Gain < 0x20)
-					mWave_FDS.nVolume = mWave_FDS.nVolEnv_Gain;
-				else
-					mWave_FDS.nVolume = 0x20;
-			}
-			mWave_FDS.nFreq.B.h = v & 0x0F;
-			mWave_FDS.bMain_On = mWave_FDS.nFreq.W && mWave_FDS.bEnabled && !mWave_FDS.bWaveWrite;
+    case 0x4083:
+      mWave_FDS.bEnabled = !(v & 0x80);
+      mWave_FDS.bEnvelopeEnable = !(v & 0x40);
+      if (v & 0x80)
+      {
+        if (mWave_FDS.nVolEnv_Gain < 0x20)
+          mWave_FDS.nVolume = mWave_FDS.nVolEnv_Gain;
+        else
+          mWave_FDS.nVolume = 0x20;
+      }
+      mWave_FDS.nFreq.B.h = v & 0x0F;
+      mWave_FDS.bMain_On = mWave_FDS.nFreq.W && mWave_FDS.bEnabled && !mWave_FDS.bWaveWrite;
 
-			mWave_FDS.bVolEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nVolEnv_Mode & 2);
-			mWave_FDS.bSweepEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nSweep_Mode & 2);
-			break;
+      mWave_FDS.bVolEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nVolEnv_Mode & 2);
+      mWave_FDS.bSweepEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nSweep_Mode & 2);
+      break;
 
 
-		case 0x4084:
-			mWave_FDS.nSweep_Mode = v >> 6;
-			if (v & 0x80)
-				mWave_FDS.nSweep_Gain = v & 0x3F;
-			mWave_FDS.nSweep_Decay = v & 0x3F;
-			mWave_FDS.nSweep_Timer = ((mWave_FDS.nSweep_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
-			mWave_FDS.bSweepEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(v & 0x80);
-			break;
+    case 0x4084:
+      mWave_FDS.nSweep_Mode = v >> 6;
+      if (v & 0x80)
+        mWave_FDS.nSweep_Gain = v & 0x3F;
+      mWave_FDS.nSweep_Decay = v & 0x3F;
+      mWave_FDS.nSweep_Timer = ((mWave_FDS.nSweep_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
+      mWave_FDS.bSweepEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(v & 0x80);
+      break;
 
-		case 0x4085:
-			if (v & 0x40)	mWave_FDS.nSweepBias = (v & 0x3F) - 0x40;
-			else			mWave_FDS.nSweepBias = v & 0x3F;
-			mWave_FDS.nLFO_Addr = 0;
-			break;
-		}
-	}
-	else
-	{
-		switch (a)
-		{
-		case 0x4086:
-			mWave_FDS.nLFO_Freq.B.l = v;
-			mWave_FDS.bLFO_On = mWave_FDS.bLFO_Enabled && mWave_FDS.nLFO_Freq.W;
-			if (mWave_FDS.nLFO_Freq.W)
-				mWave_FDS.fLFO_Timer = 65536.0f / mWave_FDS.nLFO_Freq.W;
-			break;
+    case 0x4085:
+      if (v & 0x40)  mWave_FDS.nSweepBias = (v & 0x3F) - 0x40;
+      else  mWave_FDS.nSweepBias = v & 0x3F;
+      mWave_FDS.nLFO_Addr = 0;
+      break;
+    }
+  }
+  else
+  {
+    switch (a)
+    {
+    case 0x4086:
+      mWave_FDS.nLFO_Freq.B.l = v;
+      mWave_FDS.bLFO_On = mWave_FDS.bLFO_Enabled && mWave_FDS.nLFO_Freq.W;
+      if (mWave_FDS.nLFO_Freq.W)
+        mWave_FDS.fLFO_Timer = 65536.0f / mWave_FDS.nLFO_Freq.W;
+      break;
 
-		case 0x4087:
-			mWave_FDS.bLFO_Enabled = !(v & 0x80);
-			mWave_FDS.nLFO_Freq.B.h = v & 0x0F;
-			mWave_FDS.bLFO_On = mWave_FDS.bLFO_Enabled && mWave_FDS.nLFO_Freq.W;
-			if (mWave_FDS.nLFO_Freq.W)
-				mWave_FDS.fLFO_Timer = 65536.0f / mWave_FDS.nLFO_Freq.W;
-			break;
+    case 0x4087:
+      mWave_FDS.bLFO_Enabled = !(v & 0x80);
+      mWave_FDS.nLFO_Freq.B.h = v & 0x0F;
+      mWave_FDS.bLFO_On = mWave_FDS.bLFO_Enabled && mWave_FDS.nLFO_Freq.W;
+      if (mWave_FDS.nLFO_Freq.W)
+        mWave_FDS.fLFO_Timer = 65536.0f / mWave_FDS.nLFO_Freq.W;
+      break;
 
-		case 0x4088:
-			if (mWave_FDS.bLFO_Enabled)	break;
-			register int i;
-			for (i = 0; i < 62; i++)
-				mWave_FDS.nLFO_Table[i] = mWave_FDS.nLFO_Table[i + 2];
-			mWave_FDS.nLFO_Table[62] = mWave_FDS.nLFO_Table[63] = v & 7;
-			break;
+    case 0x4088:
+      if (mWave_FDS.bLFO_Enabled)  break;
+      register int i;
+      for (i = 0; i < 62; i++)
+        mWave_FDS.nLFO_Table[i] = mWave_FDS.nLFO_Table[i + 2];
+      mWave_FDS.nLFO_Table[62] = mWave_FDS.nLFO_Table[63] = v & 7;
+      break;
 
-		case 0x4089:
-			mWave_FDS.nMainVolume = v & 3;
-			mWave_FDS.bWaveWrite = v & 0x80;
-			mWave_FDS.bMain_On = mWave_FDS.nFreq.W && mWave_FDS.bEnabled && !mWave_FDS.bWaveWrite;
-			break;
+    case 0x4089:
+      mWave_FDS.nMainVolume = v & 3;
+      mWave_FDS.bWaveWrite = v & 0x80;
+      mWave_FDS.bMain_On = mWave_FDS.nFreq.W && mWave_FDS.bEnabled && !mWave_FDS.bWaveWrite;
+      break;
 
-		case 0x408A:
-			mWave_FDS.nEnvelopeSpeed = v;
-			mWave_FDS.bVolEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nVolEnv_Mode & 2);
-			mWave_FDS.bSweepEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nSweep_Mode & 2);
-			break;
-		}
-	}
+    case 0x408A:
+      mWave_FDS.nEnvelopeSpeed = v;
+      mWave_FDS.bVolEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nVolEnv_Mode & 2);
+      mWave_FDS.bSweepEnv_On = mWave_FDS.bEnvelopeEnable && mWave_FDS.nEnvelopeSpeed && !(mWave_FDS.nSweep_Mode & 2);
+      break;
+    }
+  }
 }
 
 void CNSFCore::WriteMemory_VRC6(WORD a, BYTE v)
 {
-	EmulateAPU(1);
+  EmulateAPU(1);
 
-	if ((a < 0xA000) && (nExternalSound & EXTSOUND_VRC7))
-		WriteMemory_VRC7(a, v);
-	else if (nExternalSound & EXTSOUND_FDS)
-		WriteMemory_FDSRAM(a, v);
+  if ((a < 0xA000) && (nExternalSound & EXTSOUND_VRC7))
+    WriteMemory_VRC7(a, v);
+  else if (nExternalSound & EXTSOUND_FDS)
+    WriteMemory_FDSRAM(a, v);
 
-	if (a <= 0x9002)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Pulse 1
-		case 0x9000:
-			mWave_VRC6Pulse[0].nVolume = v & 0x0F;
-			mWave_VRC6Pulse[0].nDutyCycle = (v >> 4) & 0x07;
-			mWave_VRC6Pulse[0].bDigitized = v & 0x80;
-			if (mWave_VRC6Pulse[0].bDigitized)
-				mWave_VRC6Pulse[0].nDutyCount = 0;
-			break;
+  if (a <= 0x9002)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Pulse 1
+    case 0x9000:
+      mWave_VRC6Pulse[0].nVolume = v & 0x0F;
+      mWave_VRC6Pulse[0].nDutyCycle = (v >> 4) & 0x07;
+      mWave_VRC6Pulse[0].bDigitized = v & 0x80;
+      if (mWave_VRC6Pulse[0].bDigitized)
+        mWave_VRC6Pulse[0].nDutyCount = 0;
+      break;
 
-		case 0x9001:
-			mWave_VRC6Pulse[0].nFreqTimer.B.l = v;
-			break;
+    case 0x9001:
+      mWave_VRC6Pulse[0].nFreqTimer.B.l = v;
+      break;
 
-		case 0x9002:
-			mWave_VRC6Pulse[0].nFreqTimer.B.h = v & 0x0F;
-			mWave_VRC6Pulse[0].bChannelEnabled = v & 0x80;
-			break;
-		}
-	}
-	else if (a >= 0xA000 && a <= 0xA002)
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Pulse 2
-		case 0xA000:
-			mWave_VRC6Pulse[1].nVolume = v & 0x0F;
-			mWave_VRC6Pulse[1].nDutyCycle = (v >> 4) & 0x07;
-			mWave_VRC6Pulse[1].bDigitized = v & 0x80;
-			if (mWave_VRC6Pulse[1].bDigitized)
-				mWave_VRC6Pulse[1].nDutyCount = 0;
-			break;
+    case 0x9002:
+      mWave_VRC6Pulse[0].nFreqTimer.B.h = v & 0x0F;
+      mWave_VRC6Pulse[0].bChannelEnabled = v & 0x80;
+      break;
+    }
+  }
+  else if (a >= 0xA000 && a <= 0xA002)
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Pulse 2
+    case 0xA000:
+      mWave_VRC6Pulse[1].nVolume = v & 0x0F;
+      mWave_VRC6Pulse[1].nDutyCycle = (v >> 4) & 0x07;
+      mWave_VRC6Pulse[1].bDigitized = v & 0x80;
+      if (mWave_VRC6Pulse[1].bDigitized)
+        mWave_VRC6Pulse[1].nDutyCount = 0;
+      break;
 
-		case 0xA001:
-			mWave_VRC6Pulse[1].nFreqTimer.B.l = v;
-			break;
+    case 0xA001:
+      mWave_VRC6Pulse[1].nFreqTimer.B.l = v;
+      break;
 
-		case 0xA002:
-			mWave_VRC6Pulse[1].nFreqTimer.B.h = v & 0x0F;
-			mWave_VRC6Pulse[1].bChannelEnabled = v & 0x80;
-			break;
-		}
-	}
-	else
-	{
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-		// Sawtooth
-		case 0xB000:
-			mWave_VRC6Saw.nAccumRate = (v & 0x3F);
-			break;
+    case 0xA002:
+      mWave_VRC6Pulse[1].nFreqTimer.B.h = v & 0x0F;
+      mWave_VRC6Pulse[1].bChannelEnabled = v & 0x80;
+      break;
+    }
+  }
+  else
+  {
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Sawtooth
+    case 0xB000:
+      mWave_VRC6Saw.nAccumRate = (v & 0x3F);
+      break;
 
-		case 0xB001:
-			mWave_VRC6Saw.nFreqTimer.B.l = v;
-			break;
+    case 0xB001:
+      mWave_VRC6Saw.nFreqTimer.B.l = v;
+      break;
 
-		case 0xB002:
-			mWave_VRC6Saw.nFreqTimer.B.h = v & 0x0F;
-			mWave_VRC6Saw.bChannelEnabled = v & 0x80;
-			break;
-		}
-	}
+    case 0xB002:
+      mWave_VRC6Saw.nFreqTimer.B.h = v & 0x0F;
+      mWave_VRC6Saw.bChannelEnabled = v & 0x80;
+      break;
+    }
+  }
 }
 
 void CNSFCore::WriteMemory_MMC5(WORD a, BYTE v)
 {
-	if ((a <= 0x5015) && !bPALMode)
-	{
-		EmulateAPU(1);
-		switch (a)
-		{
-			// // // // // // // // // // // // // 
-			// Square 1
-		case 0x5000:
-			mWave_MMC5Square[0].nDutyCycle = DUTY_CYCLE_TABLE[v >> 6];
-			mWave_MMC5Square[0].bLengthEnabled = !(mWave_MMC5Square[0].bDecayLoop = (v & 0x20));
-			mWave_MMC5Square[0].bDecayEnable = !(v & 0x10);
-			mWave_MMC5Square[0].nDecayTimer = (v & 0x0F);
+  if ((a <= 0x5015) && !bPALMode)
+  {
+    EmulateAPU(1);
+    switch (a)
+    {
+      // // // // // // // // // // // // // 
+      // Square 1
+    case 0x5000:
+      mWave_MMC5Square[0].nDutyCycle = DUTY_CYCLE_TABLE[v >> 6];
+      mWave_MMC5Square[0].bLengthEnabled = !(mWave_MMC5Square[0].bDecayLoop = (v & 0x20));
+      mWave_MMC5Square[0].bDecayEnable = !(v & 0x10);
+      mWave_MMC5Square[0].nDecayTimer = (v & 0x0F);
 
-			if (!mWave_MMC5Square[0].bDecayEnable)
-				mWave_MMC5Square[0].nVolume = mWave_MMC5Square[0].nDecayTimer;
-			break;
+      if (!mWave_MMC5Square[0].bDecayEnable)
+        mWave_MMC5Square[0].nVolume = mWave_MMC5Square[0].nDecayTimer;
+      break;
 
-		case 0x5002:
-			mWave_MMC5Square[0].nFreqTimer.B.l = v;
-			break;
+    case 0x5002:
+      mWave_MMC5Square[0].nFreqTimer.B.l = v;
+      break;
 
-		case 0x5003:
-			mWave_MMC5Square[0].nFreqTimer.B.h = v & 0x07;
-			mWave_MMC5Square[0].nDecayVolume = 0x0F;
+    case 0x5003:
+      mWave_MMC5Square[0].nFreqTimer.B.h = v & 0x07;
+      mWave_MMC5Square[0].nDecayVolume = 0x0F;
 
-			if (mWave_MMC5Square[0].bChannelEnabled)
-				mWave_MMC5Square[0].nLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
-			break;
+      if (mWave_MMC5Square[0].bChannelEnabled)
+        mWave_MMC5Square[0].nLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
+      break;
 
-			// // // // // // // // // // // // // 
-			// Square 2
-		case 0x5004:
-			mWave_MMC5Square[1].nDutyCycle = DUTY_CYCLE_TABLE[v >> 6];
-			mWave_MMC5Square[1].bLengthEnabled = !(mWave_MMC5Square[1].bDecayLoop = (v & 0x20));
-			mWave_MMC5Square[1].bDecayEnable = !(v & 0x10);
-			mWave_MMC5Square[1].nDecayTimer = (v & 0x0F);
+      // // // // // // // // // // // // // 
+      // Square 2
+    case 0x5004:
+      mWave_MMC5Square[1].nDutyCycle = DUTY_CYCLE_TABLE[v >> 6];
+      mWave_MMC5Square[1].bLengthEnabled = !(mWave_MMC5Square[1].bDecayLoop = (v & 0x20));
+      mWave_MMC5Square[1].bDecayEnable = !(v & 0x10);
+      mWave_MMC5Square[1].nDecayTimer = (v & 0x0F);
 
-			if (!mWave_MMC5Square[1].bDecayEnable)
-				mWave_MMC5Square[1].nVolume = mWave_MMC5Square[1].nDecayTimer;
-			break;
+      if (!mWave_MMC5Square[1].bDecayEnable)
+        mWave_MMC5Square[1].nVolume = mWave_MMC5Square[1].nDecayTimer;
+      break;
 
-		case 0x5006:
-			mWave_MMC5Square[1].nFreqTimer.B.l = v;
-			break;
+    case 0x5006:
+      mWave_MMC5Square[1].nFreqTimer.B.l = v;
+      break;
 
-		case 0x5007:
-			mWave_MMC5Square[1].nFreqTimer.B.h = v & 0x07;
-			mWave_MMC5Square[1].nDecayVolume = 0x0F;
+    case 0x5007:
+      mWave_MMC5Square[1].nFreqTimer.B.h = v & 0x07;
+      mWave_MMC5Square[1].nDecayVolume = 0x0F;
 
-			if (mWave_MMC5Square[1].bChannelEnabled)
-				mWave_MMC5Square[1].nLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
-			break;
+      if (mWave_MMC5Square[1].bChannelEnabled)
+        mWave_MMC5Square[1].nLengthCount = LENGTH_COUNTER_TABLE[v >> 3];
+      break;
 
-		case 0x5011:
-			mWave_MMC5Voice.nOutput = v & 0x7F;
-			break;
+    case 0x5011:
+      mWave_MMC5Voice.nOutput = v & 0x7F;
+      break;
 
 
-		case 0x5015:
-			if (v & 0x01) { mWave_MMC5Square[0].bChannelEnabled = 1; }
-			else { mWave_MMC5Square[0].bChannelEnabled = mWave_MMC5Square[0].nLengthCount = 0; }
-			if (v & 0x02) { mWave_MMC5Square[1].bChannelEnabled = 1; }
-			else { mWave_MMC5Square[1].bChannelEnabled = mWave_MMC5Square[1].nLengthCount = 0; }
-			break;
-		}
-		return;
-	}
+    case 0x5015:
+      if (v & 0x01) { mWave_MMC5Square[0].bChannelEnabled = 1; }
+      else { mWave_MMC5Square[0].bChannelEnabled = mWave_MMC5Square[0].nLengthCount = 0; }
+      if (v & 0x02) { mWave_MMC5Square[1].bChannelEnabled = 1; }
+      else { mWave_MMC5Square[1].bChannelEnabled = mWave_MMC5Square[1].nLengthCount = 0; }
+      break;
+    }
+    return;
+  }
 
-	if (a == 0x5205)
-	{
-		nMultIn_Low = v;
-		goto multiply;
-	}
-	if (a == 0x5206)
-	{
-		nMultIn_High = v;
-	multiply:
-		a = nMultIn_Low * nMultIn_High;
-		pExRAM[0x205] = a & 0xFF;
-		pExRAM[0x206] = a >> 8;
-		return;
-	}
+  if (a == 0x5205)
+  {
+    nMultIn_Low = v;
+    goto multiply;
+  }
+  if (a == 0x5206)
+  {
+    nMultIn_High = v;
+  multiply:
+    a = nMultIn_Low * nMultIn_High;
+    pExRAM[0x205] = a & 0xFF;
+    pExRAM[0x206] = a >> 8;
+    return;
+  }
 
-	if (a < 0x5C00) return;
+  if (a < 0x5C00) return;
 
-	pExRAM[a & 0x0FFF] = v;
-	if (a >= 0x5FF6)
-		WriteMemory_ExRAM(a, v);
+  pExRAM[a & 0x0FFF] = v;
+  if (a >= 0x5FF6)
+    WriteMemory_ExRAM(a, v);
 }
 
 void CNSFCore::WriteMemory_N106(WORD a, BYTE v)
 {
-	if (a < 0x4800)
-	{
-		WriteMemory_pAPU(a, v);
-		return;
-	}
+  if (a < 0x4800)
+  {
+    WriteMemory_pAPU(a, v);
+    return;
+  }
 
-	if (a == 0xF800)
-	{
-		mWave_N106.nCurrentAddress = v & 0x7F;
-		mWave_N106.bAutoIncrement = (v & 0x80);
-		return;
-	}
+  if (a == 0xF800)
+  {
+    mWave_N106.nCurrentAddress = v & 0x7F;
+    mWave_N106.bAutoIncrement = (v & 0x80);
+    return;
+  }
 
-	if (a == 0x4800)
-	{
-		EmulateAPU(1);
-		mWave_N106.nRAM[mWave_N106.nCurrentAddress << 1] = v & 0x0F;
-		mWave_N106.nRAM[(mWave_N106.nCurrentAddress << 1) + 1] = v >> 4;
-		a = mWave_N106.nCurrentAddress;
-		if (mWave_N106.bAutoIncrement)
-			mWave_N106.nCurrentAddress = (mWave_N106.nCurrentAddress + 1) & 0x7F;
+  if (a == 0x4800)
+  {
+    EmulateAPU(1);
+    mWave_N106.nRAM[mWave_N106.nCurrentAddress << 1] = v & 0x0F;
+    mWave_N106.nRAM[(mWave_N106.nCurrentAddress << 1) + 1] = v >> 4;
+    a = mWave_N106.nCurrentAddress;
+    if (mWave_N106.bAutoIncrement)
+      mWave_N106.nCurrentAddress = (mWave_N106.nCurrentAddress + 1) & 0x7F;
 
-#define N106REGWRITE(ch,r0,r1,r2,r3,r4)							\
-	case r0:	if(mWave_N106.nFreqReg[ch].B.l == v) break;		\
-				mWave_N106.nFreqReg[ch].B.l = v;				\
-				mWave_N106.fFreqTimer[ch] = -1.0f;				\
-				break;											\
-	case r1:	if(mWave_N106.nFreqReg[ch].B.h == v) break;		\
-				mWave_N106.nFreqReg[ch].B.h = v;				\
-				mWave_N106.fFreqTimer[ch] = -1.0f;				\
-				break;											\
-	case r2:	if(mWave_N106.nFreqReg[ch].B.w != (v & 3)){		\
-					mWave_N106.nFreqReg[ch].B.w = v & 0x03;		\
-					mWave_N106.fFreqTimer[ch] = -1.0f;}			\
-				mWave_N106.nWaveSize[ch] = 0x20 - (v & 0x1C);	\
-				mWave_N106.nWaveSizeWritten[ch] = (v >> 2) & 7;	\
-				break;											\
-	case r3:	mWave_N106.nWavePosStart[ch] = v;				\
-				break;											\
-	case r4:	mWave_N106.nPreVolume[ch] = v & 0x0F;			\
-				if(!bN106PopReducer)							\
-					mWave_N106.nVolume[ch] = v & 0x0F
+#define N106REGWRITE(ch,r0,r1,r2,r3,r4)  \
+  case r0:  if(mWave_N106.nFreqReg[ch].B.l == v) break;  \
+  mWave_N106.nFreqReg[ch].B.l = v;  \
+  mWave_N106.fFreqTimer[ch] = -1.0f;  \
+  break;   \
+  case r1:  if(mWave_N106.nFreqReg[ch].B.h == v) break;  \
+  mWave_N106.nFreqReg[ch].B.h = v;  \
+  mWave_N106.fFreqTimer[ch] = -1.0f;  \
+  break;   \
+  case r2:  if(mWave_N106.nFreqReg[ch].B.w != (v & 3)){  \
+  mWave_N106.nFreqReg[ch].B.w = v & 0x03;  \
+  mWave_N106.fFreqTimer[ch] = -1.0f;}  \
+  mWave_N106.nWaveSize[ch] = 0x20 - (v & 0x1C);  \
+  mWave_N106.nWaveSizeWritten[ch] = (v >> 2) & 7;  \
+  break;   \
+  case r3:  mWave_N106.nWavePosStart[ch] = v;  \
+  break;   \
+  case r4:  mWave_N106.nPreVolume[ch] = v & 0x0F;  \
+  if(!bN106PopReducer)  \
+  mWave_N106.nVolume[ch] = v & 0x0F
 
-		switch (a)
-		{
-			N106REGWRITE(0, 0x40, 0x42, 0x44, 0x46, 0x47); break;
-			N106REGWRITE(1, 0x48, 0x4A, 0x4C, 0x4E, 0x4F); break;
-			N106REGWRITE(2, 0x50, 0x52, 0x54, 0x56, 0x57); break;
-			N106REGWRITE(3, 0x58, 0x5A, 0x5C, 0x5E, 0x5F); break;
-			N106REGWRITE(4, 0x60, 0x62, 0x64, 0x66, 0x67); break;
-			N106REGWRITE(5, 0x68, 0x6A, 0x6C, 0x6E, 0x6F); break;
-			N106REGWRITE(6, 0x70, 0x72, 0x74, 0x76, 0x77); break;
-			N106REGWRITE(7, 0x78, 0x7A, 0x7C, 0x7E, 0x7F);
-			v = (v >> 4) & 7;
-			if (mWave_N106.nActiveChannels == v) break;
-			mWave_N106.nActiveChannels = v;
-			mWave_N106.fFreqTimer[0] = -1.0f;
-			mWave_N106.fFreqTimer[1] = -1.0f;
-			mWave_N106.fFreqTimer[2] = -1.0f;
-			mWave_N106.fFreqTimer[3] = -1.0f;
-			mWave_N106.fFreqTimer[4] = -1.0f;
-			mWave_N106.fFreqTimer[5] = -1.0f;
-			mWave_N106.fFreqTimer[6] = -1.0f;
-			mWave_N106.fFreqTimer[7] = -1.0f;
-			break;
-		}
+    switch (a)
+    {
+      N106REGWRITE(0, 0x40, 0x42, 0x44, 0x46, 0x47); break;
+      N106REGWRITE(1, 0x48, 0x4A, 0x4C, 0x4E, 0x4F); break;
+      N106REGWRITE(2, 0x50, 0x52, 0x54, 0x56, 0x57); break;
+      N106REGWRITE(3, 0x58, 0x5A, 0x5C, 0x5E, 0x5F); break;
+      N106REGWRITE(4, 0x60, 0x62, 0x64, 0x66, 0x67); break;
+      N106REGWRITE(5, 0x68, 0x6A, 0x6C, 0x6E, 0x6F); break;
+      N106REGWRITE(6, 0x70, 0x72, 0x74, 0x76, 0x77); break;
+      N106REGWRITE(7, 0x78, 0x7A, 0x7C, 0x7E, 0x7F);
+      v = (v >> 4) & 7;
+      if (mWave_N106.nActiveChannels == v) break;
+      mWave_N106.nActiveChannels = v;
+      mWave_N106.fFreqTimer[0] = -1.0f;
+      mWave_N106.fFreqTimer[1] = -1.0f;
+      mWave_N106.fFreqTimer[2] = -1.0f;
+      mWave_N106.fFreqTimer[3] = -1.0f;
+      mWave_N106.fFreqTimer[4] = -1.0f;
+      mWave_N106.fFreqTimer[5] = -1.0f;
+      mWave_N106.fFreqTimer[6] = -1.0f;
+      mWave_N106.fFreqTimer[7] = -1.0f;
+      break;
+    }
 #undef N106REGWRITE
-	}
+  }
 }
 
 void CNSFCore::WriteMemory_VRC7(WORD a, BYTE v)
 {
-	if (a == 0x9010)
-	{
-		nVRC7Address = v;
-		return;
-	}
-	if (a == 0x9030)
-	{
-		if (pVRC7Buffer)
-			VRC7_Mix();
-		VRC7_Write(v);
-	}
+  if (a == 0x9010)
+  {
+    nVRC7Address = v;
+    return;
+  }
+  if (a == 0x9030)
+  {
+    if (pVRC7Buffer)
+      VRC7_Mix();
+    VRC7_Write(v);
+  }
 }
 
 void CNSFCore::WriteMemory_FME07(WORD a, BYTE v)
 {
-	if ((a < 0xD000) && (nExternalSound & EXTSOUND_FDS))
-		WriteMemory_FDSRAM(a, v);
+  if ((a < 0xD000) && (nExternalSound & EXTSOUND_FDS))
+    WriteMemory_FDSRAM(a, v);
 
-	if (a == 0xC000)
-		nFME07_Address = v;
-	if (a == 0xE000)
-	{
-		switch (nFME07_Address)
-		{
-		case 0x00:	mWave_FME07[0].nFreqTimer.B.l = v;			break;
-		case 0x01:	mWave_FME07[0].nFreqTimer.B.h = v & 0x0F;	break;
-		case 0x02:	mWave_FME07[1].nFreqTimer.B.l = v;			break;
-		case 0x03:	mWave_FME07[1].nFreqTimer.B.h = v & 0x0F;	break;
-		case 0x04:	mWave_FME07[2].nFreqTimer.B.l = v;			break;
-		case 0x05:	mWave_FME07[2].nFreqTimer.B.h = v & 0x0F;	break;
-		case 0x07:
-			mWave_FME07[0].bChannelEnabled = !(v & 0x01);
-			mWave_FME07[1].bChannelEnabled = !(v & 0x02);
-			mWave_FME07[2].bChannelEnabled = !(v & 0x03);
-			break;
-		case 0x08:	mWave_FME07[0].nVolume = v & 0x0F; break;
-		case 0x09:	mWave_FME07[1].nVolume = v & 0x0F; break;
-		case 0x0A:	mWave_FME07[2].nVolume = v & 0x0F; break;
-		}
-	}
+  if (a == 0xC000)
+    nFME07_Address = v;
+  if (a == 0xE000)
+  {
+    switch (nFME07_Address)
+    {
+    case 0x00:  mWave_FME07[0].nFreqTimer.B.l = v;  break;
+    case 0x01:  mWave_FME07[0].nFreqTimer.B.h = v & 0x0F;  break;
+    case 0x02:  mWave_FME07[1].nFreqTimer.B.l = v;  break;
+    case 0x03:  mWave_FME07[1].nFreqTimer.B.h = v & 0x0F;  break;
+    case 0x04:  mWave_FME07[2].nFreqTimer.B.l = v;  break;
+    case 0x05:  mWave_FME07[2].nFreqTimer.B.h = v & 0x0F;  break;
+    case 0x07:
+      mWave_FME07[0].bChannelEnabled = !(v & 0x01);
+      mWave_FME07[1].bChannelEnabled = !(v & 0x02);
+      mWave_FME07[2].bChannelEnabled = !(v & 0x03);
+      break;
+    case 0x08:  mWave_FME07[0].nVolume = v & 0x0F; break;
+    case 0x09:  mWave_FME07[1].nVolume = v & 0x0F; break;
+    case 0x0A:  mWave_FME07[2].nVolume = v & 0x0F; break;
+    }
+  }
 }
 
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 // 
-// 		Emulate APU
+//   Emulate APU
 // 
 
 void CNSFCore::EmulateAPU(BYTE bBurnCPUCycles)
 {
-	__int64 diff;
-	int mixL, mixR, dif;
-	int tick, fulltick = (signed)(nCPUCycle - nAPUCycle);
+  __int64 diff;
+  int mixL, mixR, dif;
+  int tick, fulltick = (signed)(nCPUCycle - nAPUCycle);
 
-	/*if(bFade && nSilentSampleMax && (nSilentSamples >= nSilentSampleMax))
-		fulltick = 0;*/
+  // if(bFade && nSilentSampleMax && (nSilentSamples >= nSilentSampleMax))
+  // fulltick = 0;
 
-	while (fulltick)
-	{
-		if (pOutput)
-		{
-			if (fTicksUntilNextFrame < fTicksUntilNextSample)
-				tick = (int)ceil(fTicksUntilNextFrame);
-			else
-				tick = (int)ceil(fTicksUntilNextSample);
-		}
-		else
-			tick = (int)ceil(fTicksUntilNextFrame);
+  while (fulltick)
+  {
+    if (pOutput)
+    {
+      if (fTicksUntilNextFrame < fTicksUntilNextSample)
+        tick = (int)ceil(fTicksUntilNextFrame);
+      else
+        tick = (int)ceil(fTicksUntilNextSample);
+    }
+    else
+      tick = (int)ceil(fTicksUntilNextFrame);
 
-		tick = min(tick, fulltick);
-		fulltick -= tick;
+    tick = min(tick, fulltick);
+    fulltick -= tick;
 
-		// Sample Generation
-		nDownsample += tick;
-		mWave_Squares.DoTicks(tick);
-		mixL = mWave_TND.DoTicks(tick);
+    // Sample Generation
+    nDownsample += tick;
+    mWave_Squares.DoTicks(tick);
+    mixL = mWave_TND.DoTicks(tick);
 
-		if (nExternalSound && !bPALMode)
-		{
-			if (nExternalSound & EXTSOUND_VRC6)
-			{
-				mWave_VRC6Pulse[0].DoTicks(tick, bChannelMix[0]);
-				mWave_VRC6Pulse[1].DoTicks(tick, bChannelMix[1]);
-				mWave_VRC6Saw.DoTicks(tick, bChannelMix[2]);
-			}
-			if (nExternalSound & EXTSOUND_MMC5)
-			{
-				mWave_MMC5Square[0].DoTicks(tick, bChannelMix[3]);
-				mWave_MMC5Square[1].DoTicks(tick, bChannelMix[4]);
-				if (bChannelMix[5]) mWave_MMC5Voice.DoTicks(tick);
-			}
-			if (nExternalSound & EXTSOUND_N106)
-				mWave_N106.DoTicks(tick, &bChannelMix[6]);
-			if (nExternalSound & EXTSOUND_FME07)
-			{
-				mWave_FME07[0].DoTicks(tick, bChannelMix[20]);
-				mWave_FME07[1].DoTicks(tick, bChannelMix[21]);
-				mWave_FME07[2].DoTicks(tick, bChannelMix[22]);
-			}
-			if (nExternalSound & EXTSOUND_FDS)
-				mWave_FDS.DoTicks(tick, bChannelMix[23]);
-		}
-
-
-		if (bBurnCPUCycles)
-		{
-			nCPUCycle += mixL;
-			fulltick += mixL;
-		}
+    if (nExternalSound && !bPALMode)
+    {
+      if (nExternalSound & EXTSOUND_VRC6)
+      {
+        mWave_VRC6Pulse[0].DoTicks(tick, bChannelMix[0]);
+        mWave_VRC6Pulse[1].DoTicks(tick, bChannelMix[1]);
+        mWave_VRC6Saw.DoTicks(tick, bChannelMix[2]);
+      }
+      if (nExternalSound & EXTSOUND_MMC5)
+      {
+        mWave_MMC5Square[0].DoTicks(tick, bChannelMix[3]);
+        mWave_MMC5Square[1].DoTicks(tick, bChannelMix[4]);
+        if (bChannelMix[5]) mWave_MMC5Voice.DoTicks(tick);
+      }
+      if (nExternalSound & EXTSOUND_N106)
+        mWave_N106.DoTicks(tick, &bChannelMix[6]);
+      if (nExternalSound & EXTSOUND_FME07)
+      {
+        mWave_FME07[0].DoTicks(tick, bChannelMix[20]);
+        mWave_FME07[1].DoTicks(tick, bChannelMix[21]);
+        mWave_FME07[2].DoTicks(tick, bChannelMix[22]);
+      }
+      if (nExternalSound & EXTSOUND_FDS)
+        mWave_FDS.DoTicks(tick, bChannelMix[23]);
+    }
 
 
-		// Frame Sequencer
+    if (bBurnCPUCycles)
+    {
+      nCPUCycle += mixL;
+      fulltick += mixL;
+    }
 
-		fTicksUntilNextFrame -= tick;
-		if (fTicksUntilNextFrame <= 0)
-		{
+    // Frame Sequencer
+    fTicksUntilNextFrame -= tick;
+    if (fTicksUntilNextFrame <= 0)
+    {
 
-			if (nFrameCounterMax == 4)
-			{
-				if (nFrameCounter < 4)
-				{
-					CLOCK_MAJOR();
-					if (!(nFrameCounter & 1))
-						CLOCK_MINOR();
-				}
-			}
-			else
-			{
-				CLOCK_MAJOR();
-				if (nFrameCounter & 1)
-					CLOCK_MINOR();
+      if (nFrameCounterMax == 4)
+      {
+        if (nFrameCounter < 4)
+        {
+          CLOCK_MAJOR();
+          if (!(nFrameCounter & 1))
+            CLOCK_MINOR();
+        }
+      }
+      else
+      {
+        CLOCK_MAJOR();
+        if (nFrameCounter & 1)
+          CLOCK_MINOR();
 
-				if ((nFrameCounter == 3) && bFrameIRQEnabled)
-					bFrameIRQPending = 1;
-			}
-			fTicksUntilNextFrame += (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
-			nFrameCounter++;
-			if (nFrameCounter > nFrameCounterMax)
-				nFrameCounter = 0;
-		}
+        if ((nFrameCounter == 3) && bFrameIRQEnabled)
+          bFrameIRQPending = 1;
+      }
+      fTicksUntilNextFrame += (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
+      nFrameCounter++;
+      if (nFrameCounter > nFrameCounterMax)
+        nFrameCounter = 0;
+    }
 
-		if (!pOutput)
-			continue;
+    if (!pOutput)
+      continue;
 
-		fTicksUntilNextSample -= tick;
-		if (fTicksUntilNextSample <= 0)
-		{
-			fTicksUntilNextSample += fTicksPerSample;
-			if (!nDownsample)
-				continue;
-			if (nMonoStereo == 1)		// Mono mixing
-			{
-				mixL = 0;
-				mWave_Squares.Mix_Mono(mixL, nDownsample);
-				mWave_TND.Mix_Mono(mixL, nDownsample);
-				if (nExternalSound && !bPALMode)
-				{
-					if (nExternalSound & EXTSOUND_VRC6)
-					{
-						mWave_VRC6Pulse[0].Mix_Mono(mixL, nDownsample);
-						mWave_VRC6Pulse[1].Mix_Mono(mixL, nDownsample);
-						mWave_VRC6Saw.Mix_Mono(mixL, nDownsample);
-					}
-					if (nExternalSound & EXTSOUND_MMC5)
-					{
-						mWave_MMC5Square[0].Mix_Mono(mixL, nDownsample);
-						mWave_MMC5Square[1].Mix_Mono(mixL, nDownsample);
-						mWave_MMC5Voice.Mix_Mono(mixL, nDownsample);
-					}
-					if (nExternalSound & EXTSOUND_N106)
-						mWave_N106.Mix_Mono(mixL, nDownsample);
-					if (nExternalSound & EXTSOUND_FME07)
-					{
-						mWave_FME07[0].Mix_Mono(mixL, nDownsample);
-						mWave_FME07[1].Mix_Mono(mixL, nDownsample);
-						mWave_FME07[2].Mix_Mono(mixL, nDownsample);
-					}
-					if (nExternalSound & EXTSOUND_FDS)
-						mWave_FDS.Mix_Mono(mixL, nDownsample);
-				}
+    fTicksUntilNextSample -= tick;
+    if (fTicksUntilNextSample <= 0)
+    {
+      fTicksUntilNextSample += fTicksPerSample;
+      if (!nDownsample)
+        continue;
+      if (nMonoStereo == 1)  // Mono mixing
+      {
+        mixL = 0;
+        mWave_Squares.Mix_Mono(mixL, nDownsample);
+        mWave_TND.Mix_Mono(mixL, nDownsample);
+        if (nExternalSound && !bPALMode)
+        {
+          if (nExternalSound & EXTSOUND_VRC6)
+          {
+            mWave_VRC6Pulse[0].Mix_Mono(mixL, nDownsample);
+            mWave_VRC6Pulse[1].Mix_Mono(mixL, nDownsample);
+            mWave_VRC6Saw.Mix_Mono(mixL, nDownsample);
+          }
+          if (nExternalSound & EXTSOUND_MMC5)
+          {
+            mWave_MMC5Square[0].Mix_Mono(mixL, nDownsample);
+            mWave_MMC5Square[1].Mix_Mono(mixL, nDownsample);
+            mWave_MMC5Voice.Mix_Mono(mixL, nDownsample);
+          }
+          if (nExternalSound & EXTSOUND_N106)
+            mWave_N106.Mix_Mono(mixL, nDownsample);
+          if (nExternalSound & EXTSOUND_FME07)
+          {
+            mWave_FME07[0].Mix_Mono(mixL, nDownsample);
+            mWave_FME07[1].Mix_Mono(mixL, nDownsample);
+            mWave_FME07[2].Mix_Mono(mixL, nDownsample);
+          }
+          if (nExternalSound & EXTSOUND_FDS)
+            mWave_FDS.Mix_Mono(mixL, nDownsample);
+        }
 
-				/*	Filter	*/
+        /* Filter */
+        if (bPrePassEnabled)
+        {
+          dif = mixL - nSmPrevL;
+          nSmAccL -= dif;
+          nSmPrevL = mixL;
+          nSmAccL -= (int)(nSmAccL * fSmDiv);
+          mixL += nSmAccL;
+        }
 
-				if (bPrePassEnabled)
-				{
-					dif = mixL - nSmPrevL;
-					nSmAccL -= dif;
-					nSmPrevL = mixL;
-					nSmAccL -= (int)(nSmAccL * fSmDiv);
-					mixL += nSmAccL;
-				}
+        diff = ((__int64)mixL << 25) - nFilterAccL;
+        if (bHighPassEnabled)
+          nFilterAccL += (diff * nHighPass) >> 16;
+        if (bLowPassEnabled)
+        {
+          nFilterAcc2L += ((diff - nFilterAcc2L) * nLowPass) >> 16;
+          mixL = (int)((nFilterAcc2L) >> (23));
+        }
+        else
+          mixL = (int)(diff >> 23);
 
-				diff = ((__int64)mixL << 25) - nFilterAccL;
-				if (bHighPassEnabled)
-					nFilterAccL += (diff * nHighPass) >> 16;
-				if (bLowPassEnabled)
-				{
-					nFilterAcc2L += ((diff - nFilterAcc2L) * nLowPass) >> 16;
-					mixL = (int)((nFilterAcc2L) >> (23));
-				}
-				else
-					mixL = (int)(diff >> 23);
+        /* End Filter */
 
-				/*	End Filter	*/
+        /*if(bFade && (fFadeVolume < 1))
+        mixL = (int)(mixL * fFadeVolume);*/
 
-				/*if(bFade && (fFadeVolume < 1))
-					mixL = (int)(mixL * fFadeVolume);*/
+        if (mixL < -32768)
+          mixL = -32768;
+        else if (mixL > 32767)
+          mixL = 32767;
 
-				if (mixL < -32768)
-					mixL = -32768;
-				else if (mixL > 32767)
-					mixL = 32767;
+        *((WORD*)pOutput) = (WORD)mixL;
+        pOutput += 2;
+      }
+      else  // Stereo mixing
+      {
+        mixL = mixR = 0;
 
-				*((WORD*)pOutput) = (WORD)mixL;
-				pOutput += 2;
-			}
-			else						// Stereo mixing
-			{
-				mixL = mixR = 0;
+        mWave_Squares.Mix_Stereo(mixL, mixR, nDownsample);
+        mWave_TND.Mix_Stereo(mixL, mixR, nDownsample);
+        if (nExternalSound && !bPALMode)
+        {
+          if (nExternalSound & EXTSOUND_VRC6)
+          {
+            mWave_VRC6Pulse[0].Mix_Stereo(mixL, mixR, nDownsample);
+            mWave_VRC6Pulse[1].Mix_Stereo(mixL, mixR, nDownsample);
+            mWave_VRC6Saw.Mix_Stereo(mixL, mixR, nDownsample);
+          }
+          if (nExternalSound & EXTSOUND_MMC5)
+          {
+            mWave_MMC5Square[0].Mix_Stereo(mixL, mixR, nDownsample);
+            mWave_MMC5Square[1].Mix_Stereo(mixL, mixR, nDownsample);
+            mWave_MMC5Voice.Mix_Stereo(mixL, mixR, nDownsample);
+          }
+          if (nExternalSound & EXTSOUND_N106)
+            mWave_N106.Mix_Stereo(mixL, mixR, nDownsample);
+          if (nExternalSound & EXTSOUND_FME07)
+          {
+            mWave_FME07[0].Mix_Stereo(mixL, mixR, nDownsample);
+            mWave_FME07[1].Mix_Stereo(mixL, mixR, nDownsample);
+            mWave_FME07[2].Mix_Stereo(mixL, mixR, nDownsample);
+          }
+          if (nExternalSound & EXTSOUND_FDS)
+            mWave_FDS.Mix_Stereo(mixL, mixR, nDownsample);
+        }
 
-				mWave_Squares.Mix_Stereo(mixL, mixR, nDownsample);
-				mWave_TND.Mix_Stereo(mixL, mixR, nDownsample);
-				if (nExternalSound && !bPALMode)
-				{
-					if (nExternalSound & EXTSOUND_VRC6)
-					{
-						mWave_VRC6Pulse[0].Mix_Stereo(mixL, mixR, nDownsample);
-						mWave_VRC6Pulse[1].Mix_Stereo(mixL, mixR, nDownsample);
-						mWave_VRC6Saw.Mix_Stereo(mixL, mixR, nDownsample);
-					}
-					if (nExternalSound & EXTSOUND_MMC5)
-					{
-						mWave_MMC5Square[0].Mix_Stereo(mixL, mixR, nDownsample);
-						mWave_MMC5Square[1].Mix_Stereo(mixL, mixR, nDownsample);
-						mWave_MMC5Voice.Mix_Stereo(mixL, mixR, nDownsample);
-					}
-					if (nExternalSound & EXTSOUND_N106)
-						mWave_N106.Mix_Stereo(mixL, mixR, nDownsample);
-					if (nExternalSound & EXTSOUND_FME07)
-					{
-						mWave_FME07[0].Mix_Stereo(mixL, mixR, nDownsample);
-						mWave_FME07[1].Mix_Stereo(mixL, mixR, nDownsample);
-						mWave_FME07[2].Mix_Stereo(mixL, mixR, nDownsample);
-					}
-					if (nExternalSound & EXTSOUND_FDS)
-						mWave_FDS.Mix_Stereo(mixL, mixR, nDownsample);
-				}
+        /* Filter */
 
-				/*	Filter	*/
+        if (bPrePassEnabled)
+        {
+          dif = mixL - nSmPrevL;
+          nSmAccL -= dif;
+          nSmPrevL = mixL;
+          nSmAccL -= (int)(nSmAccL * fSmDiv);
+          mixL += nSmAccL;
 
-				if (bPrePassEnabled)
-				{
-					dif = mixL - nSmPrevL;
-					nSmAccL -= dif;
-					nSmPrevL = mixL;
-					nSmAccL -= (int)(nSmAccL * fSmDiv);
-					mixL += nSmAccL;
+          dif = mixR - nSmPrevR;
+          nSmAccR -= dif;
+          nSmPrevR = mixR;
+          nSmAccR -= (int)(nSmAccR * fSmDiv);
+          mixR += nSmAccR;
+        }
 
-					dif = mixR - nSmPrevR;
-					nSmAccR -= dif;
-					nSmPrevR = mixR;
-					nSmAccR -= (int)(nSmAccR * fSmDiv);
-					mixR += nSmAccR;
-				}
-
-				diff = ((__int64)mixL << 25) - nFilterAccL;
-				if (bHighPassEnabled)
-					nFilterAccL += (diff * nHighPass) >> 16;
-				if (bLowPassEnabled)
-				{
-					nFilterAcc2L += ((diff - nFilterAcc2L) * nLowPass) >> 16;
-					mixL = (int)((nFilterAcc2L) >> (23));
-				}
-				else
-					mixL = (int)(diff >> 23);
+        diff = ((__int64)mixL << 25) - nFilterAccL;
+        if (bHighPassEnabled)
+          nFilterAccL += (diff * nHighPass) >> 16;
+        if (bLowPassEnabled)
+        {
+          nFilterAcc2L += ((diff - nFilterAcc2L) * nLowPass) >> 16;
+          mixL = (int)((nFilterAcc2L) >> (23));
+        }
+        else
+          mixL = (int)(diff >> 23);
 
 
-				diff = ((__int64)mixR << 25) - nFilterAccR;
-				if (bHighPassEnabled)
-					nFilterAccR += (diff * nHighPass) >> 16;
-				if (bLowPassEnabled)
-				{
-					nFilterAcc2R += ((diff - nFilterAcc2R) * nLowPass) >> 16;
-					mixR = (int)((nFilterAcc2R) >> (23));
-				}
-				else
-					mixR = (int)(diff >> 23);
+        diff = ((__int64)mixR << 25) - nFilterAccR;
+        if (bHighPassEnabled)
+          nFilterAccR += (diff * nHighPass) >> 16;
+        if (bLowPassEnabled)
+        {
+          nFilterAcc2R += ((diff - nFilterAcc2R) * nLowPass) >> 16;
+          mixR = (int)((nFilterAcc2R) >> (23));
+        }
+        else
+          mixR = (int)(diff >> 23);
 
-				/*	End Filter	*/
+        /* End Filter */
 
-				/*if(bFade && (fFadeVolume < 1))
-				{
-					mixL = (int)(mixL * fFadeVolume);
-					mixR = (int)(mixR * fFadeVolume);
-				}*/
+        /*if(bFade && (fFadeVolume < 1))
+        {
+        mixL = (int)(mixL * fFadeVolume);
+        mixR = (int)(mixR * fFadeVolume);
+        }*/
 
-				if (mixL < -32768)
-					mixL = -32768;
-				else if (mixL > 32767)
-					mixL = 32767;
-				if (mixR < -32768)
-					mixR = -32768;
-				else if (mixR > 32767)
-					mixR = 32767;
+        if (mixL < -32768)
+          mixL = -32768;
+        else if (mixL > 32767)
+          mixL = 32767;
+        if (mixR < -32768)
+          mixR = -32768;
+        else if (mixR > 32767)
+          mixR = 32767;
 
-				*((UINT*)pOutput) = (UINT)((mixL & 0x0000FFFF) | (mixR << 16));
-				pOutput += 4;
-			}
-			nDownsample = 0;
-		}
-	}
+        *((UINT*)pOutput) = (UINT)((mixL & 0x0000FFFF) | (mixR << 16));
+        pOutput += 4;
+      }
+      nDownsample = 0;
+    }
+  }
 
-	nAPUCycle = nCPUCycle;
+  nAPUCycle = nCPUCycle;
 }
 
 
 /*
- *	CNSF Contructor
+ *  CNSF Contructor
  */
 
 CNSFCore::CNSFCore()
 {
-	int i;
-	ZeroMemory(this, sizeof(CNSFCore));
+  int i;
+  ZeroMemory(this, sizeof(CNSFCore));
 
-	// Default filter bases
-	nHighPassBase = 150;
-	nLowPassBase = 27000;
-	fSmDiv = 0.75f;
+  // Default filter bases
+  nHighPassBase = 150;
+  nLowPassBase = 27000;
+  fSmDiv = 0.75f;
 
-	bLowPassEnabled = 0;
-	bPrePassEnabled = 0;
-	bHighPassEnabled = 0;
+  bLowPassEnabled = 0;
+  bPrePassEnabled = 0;
+  bHighPassEnabled = 0;
 
-	mWave_TND.nNoiseRandomShift = 1;
-	for (i = 0; i < 8; i++)
-		mWave_TND.pDMCDMAPtr[i] = pROM[i + 2];
-
-
-	nSampleRate = 44100;		// Default
-	nMonoStereo = 2;			// Default;
-	fMasterVolume = 1.0f;
-
-	for (i = 0; i < 24; i++)
-		bChannelMix[i] = 1;
-
-	for (i = 0; i < 29; i++)
-	{
-		nChannelVol[i] = 255;
-		nChannelPan[i] = 0;
-	}
-
-	nChannelPan[0] = -45;
-	nChannelPan[1] = 45;
-	nChannelPan[5] = -50;
-	nChannelPan[6] = 50;
-	nChannelPan[8] = -50;
-	nChannelPan[9] = 50;
-
-	SetPlaybackOptions(nSampleRate, nMonoStereo);
-
-	bDMCPopReducer = 1;
-
-	for (i = 0; i < 8; i++)
-		mWave_N106.fFrequencyLookupTable[i] = (((i + 1) * 45 * 0x40000) / (float)NES_FREQUENCY) * (float)NTSC_FREQUENCY;
+  mWave_TND.nNoiseRandomShift = 1;
+  for (i = 0; i < 8; i++)
+    mWave_TND.pDMCDMAPtr[i] = pROM[i + 2];
 
 
-	mWave_Squares.nInvertFreqCutoff = 0xFFFF;
-	mWave_TND.nInvertFreqCutoff_Tri = 0xFFFF;
-	mWave_TND.nInvertFreqCutoff_Noise = 0xFFFF;
-	mWave_VRC6Pulse[0].nInvertFreqCutoff = 0xFFFF;
-	mWave_VRC6Pulse[1].nInvertFreqCutoff = 0xFFFF;
-	mWave_VRC6Saw.nInvertFreqCutoff = 0xFFFF;
-	mWave_MMC5Square[0].nInvertFreqCutoff = 0xFFFF;
-	mWave_MMC5Square[1].nInvertFreqCutoff = 0xFFFF;
-	memset(mWave_N106.nInvertFreqCutoff, 0, 4 * 8 * 8);
-	mWave_FME07[0].nInvertFreqCutoff = 0xFFFF;
-	mWave_FME07[1].nInvertFreqCutoff = 0xFFFF;
-	mWave_FME07[2].nInvertFreqCutoff = 0xFFFF;
+  nSampleRate = 44100; // Default
+  nMonoStereo = 2; // Default;
+  fMasterVolume = 1.0f;
+
+  for (i = 0; i < 24; i++)
+    bChannelMix[i] = 1;
+
+  for (i = 0; i < 29; i++)
+  {
+    nChannelVol[i] = 255;
+    nChannelPan[i] = 0;
+  }
+
+  nChannelPan[0] = -45;
+  nChannelPan[1] = 45;
+  nChannelPan[5] = -50;
+  nChannelPan[6] = 50;
+  nChannelPan[8] = -50;
+  nChannelPan[9] = 50;
+
+  SetPlaybackOptions(nSampleRate, nMonoStereo);
+
+  bDMCPopReducer = 1;
+
+  for (i = 0; i < 8; i++)
+    mWave_N106.fFrequencyLookupTable[i] = (((i + 1) * 45 * 0x40000) / (float)NES_FREQUENCY) * (float)NTSC_FREQUENCY;
+
+
+  mWave_Squares.nInvertFreqCutoff = 0xFFFF;
+  mWave_TND.nInvertFreqCutoff_Tri = 0xFFFF;
+  mWave_TND.nInvertFreqCutoff_Noise = 0xFFFF;
+  mWave_VRC6Pulse[0].nInvertFreqCutoff = 0xFFFF;
+  mWave_VRC6Pulse[1].nInvertFreqCutoff = 0xFFFF;
+  mWave_VRC6Saw.nInvertFreqCutoff = 0xFFFF;
+  mWave_MMC5Square[0].nInvertFreqCutoff = 0xFFFF;
+  mWave_MMC5Square[1].nInvertFreqCutoff = 0xFFFF;
+  memset(mWave_N106.nInvertFreqCutoff, 0, 4 * 8 * 8);
+  mWave_FME07[0].nInvertFreqCutoff = 0xFFFF;
+  mWave_FME07[1].nInvertFreqCutoff = 0xFFFF;
+  mWave_FME07[2].nInvertFreqCutoff = 0xFFFF;
 }
 
 /*
- *	Initialize
+ *  Initialize
  *
- *		Initializes Memory
+ *  Initializes Memory
  */
 
 int CNSFCore::Initialize()
 {
-	if (bMemoryOK)		return 1;
+  if (bMemoryOK)  return 1;
 
-	pRAM = new BYTE[0x800];
-	pSRAM = new BYTE[0x2000];
-	pExRAM = new BYTE[0x1000];
-	mWave_TND.nOutputTable_L = new short[0x8000];
-	mWave_TND.nOutputTable_R = new short[4 * 0x8000];
+  pRAM = new BYTE[0x800];
+  pSRAM = new BYTE[0x2000];
+  pExRAM = new BYTE[0x1000];
+  mWave_TND.nOutputTable_L = new short[0x8000];
+  mWave_TND.nOutputTable_R = new short[4 * 0x8000];
 
-	if (pRAM && pSRAM && pExRAM && mWave_TND.nOutputTable_L && mWave_TND.nOutputTable_R)
-	{
-		ZeroMemory(pRAM, 0x800);
-		ZeroMemory(pSRAM, 0x2000);
-		ZeroMemory(pExRAM, 0x1000);
-		ZeroMemory(mWave_TND.nOutputTable_L, 0x10000);
-		ZeroMemory(mWave_TND.nOutputTable_R, 0x10000);
-		pStack = pRAM + 0x100;
-		bMemoryOK = 1;
-		return 1;
-	}
+  if (pRAM && pSRAM && pExRAM && mWave_TND.nOutputTable_L && mWave_TND.nOutputTable_R)
+  {
+    ZeroMemory(pRAM, 0x800);
+    ZeroMemory(pSRAM, 0x2000);
+    ZeroMemory(pExRAM, 0x1000);
+    ZeroMemory(mWave_TND.nOutputTable_L, 0x10000);
+    ZeroMemory(mWave_TND.nOutputTable_R, 0x10000);
+    pStack = pRAM + 0x100;
+    bMemoryOK = 1;
+    return 1;
+  }
 
-	bMemoryOK = 0;
+  bMemoryOK = 0;
 
-	SAFE_DELETE_ARRAY(pRAM);
-	SAFE_DELETE_ARRAY(pSRAM);
-	SAFE_DELETE_ARRAY(pExRAM);
-	SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_L);
-	SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_R);
+  SAFE_DELETE_ARRAY(pRAM);
+  SAFE_DELETE_ARRAY(pSRAM);
+  SAFE_DELETE_ARRAY(pExRAM);
+  SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_L);
+  SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_R);
 
-	pStack = NULL;
-	return 0;
+  pStack = NULL;
+  return 0;
 }
 
 /*
- *	Destroy
+ *  Destroy
  */
 
 void CNSFCore::Destroy()
 {
-	WaitForSamples();
+  WaitForSamples();
 
-	SAFE_DELETE_ARRAY(pRAM);
-	SAFE_DELETE_ARRAY(pSRAM);
-	SAFE_DELETE_ARRAY(pExRAM);
-	SAFE_DELETE_ARRAY(pROM_Full);
-	SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_L);
-	SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_R);
+  SAFE_DELETE_ARRAY(pRAM);
+  SAFE_DELETE_ARRAY(pSRAM);
+  SAFE_DELETE_ARRAY(pExRAM);
+  SAFE_DELETE_ARRAY(pROM_Full);
+  SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_L);
+  SAFE_DELETE_ARRAY(mWave_TND.nOutputTable_R);
 
-	ZeroMemory(pROM, sizeof(BYTE*) * 10);
+  ZeroMemory(pROM, sizeof(BYTE*) * 10);
 
-	pStack = NULL;
-	nROMSize = nROMMaxSize = nROMBankCount = 0;
-	bMemoryOK = bFileLoaded = bTrackSelected = 0;
+  pStack = NULL;
+  nROMSize = nROMMaxSize = nROMBankCount = 0;
+  bMemoryOK = bFileLoaded = bTrackSelected = 0;
 
-	VRC7_Destroy();
+  VRC7_Destroy();
 }
 
 /*
- *	LoadNSF
+ *  LoadNSF
  */
 
 int CNSFCore::LoadNSF(const CNSFFile* fl)
 {
-	WaitForSamples();
+  WaitForSamples();
 
-	if (!bMemoryOK)
-		return 0;
+  if (!bMemoryOK)
+    return 0;
 
-	if (!fl)								return 0;
-	if (fl->nDataBufferSize < 1)			return 0;
-	if (!fl->pDataBuffer)				return 0;
+  if (!fl)  return 0;
+  if (fl->nDataBufferSize < 1)  return 0;
+  if (!fl->pDataBuffer)  return 0;
 
-	int i;
+  int i;
 
-	bFileLoaded = 0;
-	bTrackSelected = 0;
-	nExternalSound = fl->nChipExtensions;
-	if (fl->nIsPal & 2)
-		bPALMode = bPALPreference;
-	else
-		bPALMode = fl->nIsPal & 1;
+  bFileLoaded = 0;
+  bTrackSelected = 0;
+  nExternalSound = fl->nChipExtensions;
+  if (fl->nIsPal & 2)
+    bPALMode = bPALPreference;
+  else
+    bPALMode = fl->nIsPal & 1;
 
-	SetPlaybackOptions(nSampleRate, nMonoStereo);
+  SetPlaybackOptions(nSampleRate, nMonoStereo);
 
-	int neededsize = fl->nDataBufferSize + (fl->nLoadAddress & 0x0FFF);
-	if (neededsize & 0x0FFF)		neededsize += 0x1000 - (neededsize & 0x0FFF);
-	if (neededsize < 0x1000)		neededsize = 0x1000;
+  int neededsize = fl->nDataBufferSize + (fl->nLoadAddress & 0x0FFF);
+  if (neededsize & 0x0FFF)  neededsize += 0x1000 - (neededsize & 0x0FFF);
+  if (neededsize < 0x1000)  neededsize = 0x1000;
 
-	BYTE specialload = 0;
+  BYTE specialload = 0;
 
-	for (i = 0; (i < 8) && (!fl->nBankswitch[i]); i++);
-	if (i < 8)		// Uses bankswitching
-	{
-		memcpy(&nBankswitchInitValues[2], fl->nBankswitch, 8);
-		nBankswitchInitValues[0] = fl->nBankswitch[6];
-		nBankswitchInitValues[1] = fl->nBankswitch[7];
-		if (nExternalSound & EXTSOUND_FDS)
-		{
-			if (!(nBankswitchInitValues[0] || nBankswitchInitValues[1]))
-			{
-				// FDS sound with '00' specified for both $6000 and $7000 banks.
-				// Point this to an area of fresh RAM (sort of hackish solution
-				// For those FDS tunes that don't quite follow the nsf specs.
-				nBankswitchInitValues[0] = (BYTE)(neededsize >> 12);
-				nBankswitchInitValues[1] = (BYTE)(neededsize >> 12) + 1;
-				neededsize += 0x2000;
-			}
-		}
-	}
-	else			// Doesn't
-	{
-		if (nExternalSound & EXTSOUND_FDS)
-		{
-			// Bad load address
-			if (fl->nLoadAddress < 0x6000)		return 0;
+  for (i = 0; (i < 8) && (!fl->nBankswitch[i]); i++);
+  if (i < 8) // Uses bankswitching
+  {
+    memcpy(&nBankswitchInitValues[2], fl->nBankswitch, 8);
+    nBankswitchInitValues[0] = fl->nBankswitch[6];
+    nBankswitchInitValues[1] = fl->nBankswitch[7];
+    if (nExternalSound & EXTSOUND_FDS)
+    {
+      if (!(nBankswitchInitValues[0] || nBankswitchInitValues[1]))
+      {
+        // FDS sound with '00' specified for both $6000 and $7000 banks.
+        // Point this to an area of fresh RAM (sort of hackish solution
+        // For those FDS tunes that don't quite follow the nsf specs.
+        nBankswitchInitValues[0] = (BYTE)(neededsize >> 12);
+        nBankswitchInitValues[1] = (BYTE)(neededsize >> 12) + 1;
+        neededsize += 0x2000;
+      }
+    }
+  }
+  else // Doesn't
+  {
+    if (nExternalSound & EXTSOUND_FDS)
+    {
+      // Bad load address
+      if (fl->nLoadAddress < 0x6000)  return 0;
 
-			if (neededsize < 0xA000)
-				neededsize = 0xA000;
-			specialload = 1;
-			for (i = 0; i < 10; i++)
-				nBankswitchInitValues[i] = (BYTE)i;
-		}
-		else
-		{
-			// Bad load address
-			if (fl->nLoadAddress < 0x8000)		return 0;
+      if (neededsize < 0xA000)
+        neededsize = 0xA000;
+      specialload = 1;
+      for (i = 0; i < 10; i++)
+        nBankswitchInitValues[i] = (BYTE)i;
+    }
+    else
+    {
+      // Bad load address
+      if (fl->nLoadAddress < 0x8000)  return 0;
 
-			int j = (fl->nLoadAddress >> 12) - 6;
-			for (i = 0; i < j; i++)
-				nBankswitchInitValues[i] = 0;
-			for (j = 0; i < 10; i++, j++)
-				nBankswitchInitValues[i] = (BYTE)j;
-		}
-	}
+      int j = (fl->nLoadAddress >> 12) - 6;
+      for (i = 0; i < j; i++)
+        nBankswitchInitValues[i] = 0;
+      for (j = 0; i < 10; i++, j++)
+        nBankswitchInitValues[i] = (BYTE)j;
+    }
+  }
 
-	if (neededsize > nROMMaxSize)
-	{
-		SAFE_DELETE_ARRAY(pROM_Full);
-		pROM_Full = new BYTE[neededsize];
-		if (!pROM_Full)
-		{
-			nROMMaxSize = 0;
-			nROMSize = 0;
-			return 0;
-		}
-		nROMMaxSize = neededsize;
-	}
+  if (neededsize > nROMMaxSize)
+  {
+    SAFE_DELETE_ARRAY(pROM_Full);
+    pROM_Full = new BYTE[neededsize];
+    if (!pROM_Full)
+    {
+      nROMMaxSize = 0;
+      nROMSize = 0;
+      return 0;
+    }
+    nROMMaxSize = neededsize;
+  }
 
-	nROMSize = neededsize;
-	nROMBankCount = neededsize >> 12;
+  nROMSize = neededsize;
+  nROMBankCount = neededsize >> 12;
 
-	ZeroMemory(pROM_Full, nROMMaxSize);
-	if (specialload)
-		memcpy(pROM_Full + (fl->nLoadAddress - 0x6000), fl->pDataBuffer, fl->nDataBufferSize);
-	else
-		memcpy(pROM_Full + (fl->nLoadAddress & 0x0FFF), fl->pDataBuffer, fl->nDataBufferSize);
+  ZeroMemory(pROM_Full, nROMMaxSize);
+  if (specialload)
+    memcpy(pROM_Full + (fl->nLoadAddress - 0x6000), fl->pDataBuffer, fl->nDataBufferSize);
+  else
+    memcpy(pROM_Full + (fl->nLoadAddress & 0x0FFF), fl->pDataBuffer, fl->nDataBufferSize);
 
-	ZeroMemory(pRAM, 0x0800);
-	ZeroMemory(pExRAM, 0x1000);
-	ZeroMemory(pSRAM, 0x2000);
+  ZeroMemory(pRAM, 0x0800);
+  ZeroMemory(pExRAM, 0x1000);
+  ZeroMemory(pSRAM, 0x2000);
 
-	nExternalSound = fl->nChipExtensions;
-	fNSFPlaybackSpeed = (bPALMode ? PAL_NMIRATE : NTSC_NMIRATE);
+  nExternalSound = fl->nChipExtensions;
+  fNSFPlaybackSpeed = (bPALMode ? PAL_NMIRATE : NTSC_NMIRATE);
 
-	bFileLoaded = 1;
+  bFileLoaded = 1;
 
-	SetPlaybackSpeed(0);
+  SetPlaybackSpeed(0);
 
-	nPlayAddress = fl->nPlayAddress;
-	nInitAddress = fl->nInitAddress;
+  nPlayAddress = fl->nPlayAddress;
+  nInitAddress = fl->nInitAddress;
 
-	pExRAM[0x00] = 0x20;						// JSR
-	memcpy(&pExRAM[0x01], &nInitAddress, 2);		// Init Address
-	pExRAM[0x03] = 0xF2;						// JAM
-	pExRAM[0x04] = 0x20;						// JSR
-	memcpy(&pExRAM[0x05], &nPlayAddress, 2);		// Play Address
-	pExRAM[0x07] = 0x4C;						// JMP
-	pExRAM[0x08] = 0x03;						// $5003  (JAM right before the JSR to play address)
-	pExRAM[0x09] = 0x50;
+  pExRAM[0x00] = 0x20; // JSR
+  memcpy(&pExRAM[0x01], &nInitAddress, 2); // Init Address
+  pExRAM[0x03] = 0xF2; // JAM
+  pExRAM[0x04] = 0x20; // JSR
+  memcpy(&pExRAM[0x05], &nPlayAddress, 2); // Play Address
+  pExRAM[0x07] = 0x4C; // JMP
+  pExRAM[0x08] = 0x03; // $5003  (JAM right before the JSR to play address)
+  pExRAM[0x09] = 0x50;
 
-	regA = regX = regY = 0;
-	regP = 0x04;			// I_FLAG
-	regSP = 0xFF;
+  regA = regX = regY = 0;
+  regP = 0x04; // I_FLAG
+  regSP = 0xFF;
 
-	nFilterAccL = nFilterAccR = nFilterAcc2L = nFilterAcc2R = 0;
+  nFilterAccL = nFilterAccR = nFilterAcc2L = nFilterAcc2R = 0;
 
 
-	/*	Reset Read/Write Procs			*/
+  /* Reset Read/Write Procs   */
 
-	ReadMemory[0] = ReadMemory[1] = &CNSFCore::ReadMemory_RAM;
-	ReadMemory[2] = ReadMemory[3] = &CNSFCore::ReadMemory_Default;
-	ReadMemory[4] = &CNSFCore::ReadMemory_pAPU;
-	ReadMemory[5] = &CNSFCore::ReadMemory_ExRAM;
-	ReadMemory[6] = ReadMemory[7] = &CNSFCore::ReadMemory_SRAM;
+  ReadMemory[0] = ReadMemory[1] = &CNSFCore::ReadMemory_RAM;
+  ReadMemory[2] = ReadMemory[3] = &CNSFCore::ReadMemory_Default;
+  ReadMemory[4] = &CNSFCore::ReadMemory_pAPU;
+  ReadMemory[5] = &CNSFCore::ReadMemory_ExRAM;
+  ReadMemory[6] = ReadMemory[7] = &CNSFCore::ReadMemory_SRAM;
 
-	WriteMemory[0] = WriteMemory[1] = &CNSFCore::WriteMemory_RAM;
-	WriteMemory[2] = WriteMemory[3] = &CNSFCore::WriteMemory_Default;
-	WriteMemory[4] = &CNSFCore::WriteMemory_pAPU;
-	WriteMemory[5] = &CNSFCore::WriteMemory_ExRAM;
-	WriteMemory[6] = WriteMemory[7] = &CNSFCore::WriteMemory_SRAM;
+  WriteMemory[0] = WriteMemory[1] = &CNSFCore::WriteMemory_RAM;
+  WriteMemory[2] = WriteMemory[3] = &CNSFCore::WriteMemory_Default;
+  WriteMemory[4] = &CNSFCore::WriteMemory_pAPU;
+  WriteMemory[5] = &CNSFCore::WriteMemory_ExRAM;
+  WriteMemory[6] = WriteMemory[7] = &CNSFCore::WriteMemory_SRAM;
 
-	for (i = 8; i < 16; i++)
-	{
-		ReadMemory[i] = &CNSFCore::ReadMemory_ROM;
-		WriteMemory[i] = &CNSFCore::WriteMemory_Default;
-	}
+  for (i = 8; i < 16; i++)
+  {
+    ReadMemory[i] = &CNSFCore::ReadMemory_ROM;
+    WriteMemory[i] = &CNSFCore::WriteMemory_Default;
+  }
 
-	if (nExternalSound & EXTSOUND_FDS)
-	{
-		WriteMemory[0x06] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x07] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x08] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x09] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x0A] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x0B] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x0C] = &CNSFCore::WriteMemory_FDSRAM;
-		WriteMemory[0x0D] = &CNSFCore::WriteMemory_FDSRAM;
-		ReadMemory[0x06] = &CNSFCore::ReadMemory_ROM;
-		ReadMemory[0x07] = &CNSFCore::ReadMemory_ROM;
-	}
-	if (!bPALMode)	// No expansion sound available on a PAL system
-	{
-		if (nExternalSound & EXTSOUND_VRC7)
-		{
-			WriteMemory[9] = &CNSFCore::WriteMemory_VRC7;
-			VRC7_Init();
-		}
-		if (nExternalSound & EXTSOUND_VRC6)
-		{
-			WriteMemory[0x09] = &CNSFCore::WriteMemory_VRC6;	// If both VRC6+VRC7... it MUST go to WriteMemory_VRC6 
-			WriteMemory[0x0A] = &CNSFCore::WriteMemory_VRC6;	// Or register writes will be lost (WriteMemory_VRC6 calls
-			WriteMemory[0x0B] = &CNSFCore::WriteMemory_VRC6;	// WriteMemory_VRC7 if needed)
-		}
-		if (nExternalSound & EXTSOUND_N106)
-		{
-			WriteMemory[0x04] = &CNSFCore::WriteMemory_N106;
-			ReadMemory[0x04] = &CNSFCore::ReadMemory_N106;
-			WriteMemory[0x0F] = &CNSFCore::WriteMemory_N106;
-		}
-		if (nExternalSound & EXTSOUND_FME07)
-		{
-			WriteMemory[0x0C] = &CNSFCore::WriteMemory_FME07;
-			WriteMemory[0x0E] = &CNSFCore::WriteMemory_FME07;
-		}
-	}
-	if (nExternalSound & EXTSOUND_MMC5)			// MMC5 still has a multiplication reg that needs to be available on PAL tunes
-		WriteMemory[0x05] = &CNSFCore::WriteMemory_MMC5;
+  if (nExternalSound & EXTSOUND_FDS)
+  {
+    WriteMemory[0x06] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x07] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x08] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x09] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x0A] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x0B] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x0C] = &CNSFCore::WriteMemory_FDSRAM;
+    WriteMemory[0x0D] = &CNSFCore::WriteMemory_FDSRAM;
+    ReadMemory[0x06] = &CNSFCore::ReadMemory_ROM;
+    ReadMemory[0x07] = &CNSFCore::ReadMemory_ROM;
+  }
+  if (!bPALMode)  // No expansion sound available on a PAL system
+  {
+    if (nExternalSound & EXTSOUND_VRC7)
+    {
+      WriteMemory[9] = &CNSFCore::WriteMemory_VRC7;
+      VRC7_Init();
+    }
+    if (nExternalSound & EXTSOUND_VRC6)
+    {
+      WriteMemory[0x09] = &CNSFCore::WriteMemory_VRC6; // If both VRC6+VRC7... it MUST go to WriteMemory_VRC6 
+      WriteMemory[0x0A] = &CNSFCore::WriteMemory_VRC6; // Or register writes will be lost (WriteMemory_VRC6 calls
+      WriteMemory[0x0B] = &CNSFCore::WriteMemory_VRC6; // WriteMemory_VRC7 if needed)
+    }
+    if (nExternalSound & EXTSOUND_N106)
+    {
+      WriteMemory[0x04] = &CNSFCore::WriteMemory_N106;
+      ReadMemory[0x04] = &CNSFCore::ReadMemory_N106;
+      WriteMemory[0x0F] = &CNSFCore::WriteMemory_N106;
+    }
+    if (nExternalSound & EXTSOUND_FME07)
+    {
+      WriteMemory[0x0C] = &CNSFCore::WriteMemory_FME07;
+      WriteMemory[0x0E] = &CNSFCore::WriteMemory_FME07;
+    }
+  }
+  if (nExternalSound & EXTSOUND_MMC5)  // MMC5 still has a multiplication reg that needs to be available on PAL tunes
+    WriteMemory[0x05] = &CNSFCore::WriteMemory_MMC5;
 
-	return 1;
+  return 1;
 }
 
 /*
- *	SetTrack
+ *  SetTrack
  */
 
 void CNSFCore::SetTrack(BYTE track)
 {
-	int i;
-	WaitForSamples();
-	if (!bFileLoaded)		return;
+  int i;
+  WaitForSamples();
+  if (!bFileLoaded)  return;
 
-	bTrackSelected = 1;
-	nCurTrack = track;
+  bTrackSelected = 1;
+  nCurTrack = track;
 
-	regPC = 0x5000;
-	regA = track;
-	regX = bPALMode;
-	regY = bCleanAXY ? 0 : 0xCD;
-	regSP = 0xFF;
-	if (bCleanAXY)
-		regP = 0x04;
-	bCPUJammed = 0;
+  regPC = 0x5000;
+  regA = track;
+  regX = bPALMode;
+  regY = bCleanAXY ? 0 : 0xCD;
+  regSP = 0xFF;
+  if (bCleanAXY)
+    regP = 0x04;
+  bCPUJammed = 0;
 
-	nCPUCycle = nAPUCycle = 0;
-	nDMCPop_Prev = 0;
-	bDMCPop_Skip = 0;
+  nCPUCycle = nAPUCycle = 0;
+  nDMCPop_Prev = 0;
+  bDMCPop_Skip = 0;
 
-	for (i = 0x4000; i < 0x400F; i++)
-		WriteMemory_pAPU(i, 0);
-	WriteMemory_pAPU(0x4010, 0);
-	WriteMemory_pAPU(0x4012, 0);
-	WriteMemory_pAPU(0x4013, 0);
-	WriteMemory_pAPU(0x4014, 0);
-	WriteMemory_pAPU(0x4015, 0);
-	WriteMemory_pAPU(0x4015, 0x0F);
-	WriteMemory_pAPU(0x4017, 0);
+  for (i = 0x4000; i < 0x400F; i++)
+    WriteMemory_pAPU(i, 0);
+  WriteMemory_pAPU(0x4010, 0);
+  WriteMemory_pAPU(0x4012, 0);
+  WriteMemory_pAPU(0x4013, 0);
+  WriteMemory_pAPU(0x4014, 0);
+  WriteMemory_pAPU(0x4015, 0);
+  WriteMemory_pAPU(0x4015, 0x0F);
+  WriteMemory_pAPU(0x4017, 0);
 
-	for (i = 0; i < 10; i++)
-		WriteMemory_ExRAM(0x5FF6 + i, nBankswitchInitValues[i]);
+  for (i = 0; i < 10; i++)
+    WriteMemory_ExRAM(0x5FF6 + i, nBankswitchInitValues[i]);
 
-	ZeroMemory(pRAM, 0x0800);
-	ZeroMemory(pSRAM, 0x2000);
-	ZeroMemory(&pExRAM[0x10], 0x0FF0);
-	// bFade = 0;
-
-
-	fTicksUntilNextSample = fTicksPerSample;
-	fTicksUntilNextFrame = (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
-	fTicksUntilNextPlay = fTicksPerPlay;
-	nTotalPlays = 0;
-
-	/*	Clear mixing vals	*/
-	mWave_Squares.nMixL = mWave_Squares.nMixR = 0;
-	mWave_TND.nMixL = mWave_TND.nMixR = 0;
-	mWave_VRC6Pulse[0].nMixL = mWave_VRC6Pulse[0].nMixR = 0;
-	mWave_VRC6Pulse[1].nMixL = mWave_VRC6Pulse[1].nMixR = 0;
-	mWave_VRC6Saw.nMixL = mWave_VRC6Saw.nMixR = 0;
-	mWave_MMC5Square[0].nMixL = mWave_MMC5Square[0].nMixR = 0;
-	mWave_MMC5Square[1].nMixL = mWave_MMC5Square[1].nMixR = 0;
-	mWave_MMC5Voice.nMixL = mWave_MMC5Voice.nMixR = 0;
+  ZeroMemory(pRAM, 0x0800);
+  ZeroMemory(pSRAM, 0x2000);
+  ZeroMemory(&pExRAM[0x10], 0x0FF0);
+  // bFade = 0;
 
 
-	/*	Reset Tri/Noise/DMC	*/
-	mWave_TND.nTriStep = mWave_TND.nTriOutput = 0;
-	mWave_TND.nDMCOutput = 0;
-	mWave_TND.bNoiseRandomOut = 0;
-	mWave_Squares.nDutyCount[0] = mWave_Squares.nDutyCount[1] = 0;
-	mWave_TND.bDMCActive = 0;
-	mWave_TND.nDMCBytesRemaining = 0;
-	mWave_TND.bDMCSampleBufferEmpty = 1;
-	mWave_TND.bDMCDeltaSilent = 1;
+  fTicksUntilNextSample = fTicksPerSample;
+  fTicksUntilNextFrame = (bPALMode ? PAL_FRAME_COUNTER_FREQ : NTSC_FRAME_COUNTER_FREQ);
+  fTicksUntilNextPlay = fTicksPerPlay;
+  nTotalPlays = 0;
 
-	/*	Reset VRC6	*/
-	mWave_VRC6Pulse[0].nVolume = 0;
-	mWave_VRC6Pulse[1].nVolume = 0;
-	mWave_VRC6Saw.nAccumRate = 0;
+  /* Clear mixing vals */
+  mWave_Squares.nMixL = mWave_Squares.nMixR = 0;
+  mWave_TND.nMixL = mWave_TND.nMixR = 0;
+  mWave_VRC6Pulse[0].nMixL = mWave_VRC6Pulse[0].nMixR = 0;
+  mWave_VRC6Pulse[1].nMixL = mWave_VRC6Pulse[1].nMixR = 0;
+  mWave_VRC6Saw.nMixL = mWave_VRC6Saw.nMixR = 0;
+  mWave_MMC5Square[0].nMixL = mWave_MMC5Square[0].nMixR = 0;
+  mWave_MMC5Square[1].nMixL = mWave_MMC5Square[1].nMixR = 0;
+  mWave_MMC5Voice.nMixL = mWave_MMC5Voice.nMixR = 0;
 
-	/*	Reset MMC5	*/
-	mWave_MMC5Square[0].nVolume = 0;
-	mWave_MMC5Square[1].nVolume = 0;
-	mWave_MMC5Voice.nOutput = 0;
 
-	/*	Reset N106	*/
-	ZeroMemory(mWave_N106.nRAM, 0x100);
-	ZeroMemory(mWave_N106.nVolume, 8);
-	ZeroMemory(mWave_N106.nOutput, 8);
-	ZeroMemory(mWave_N106.nMixL, 32);
-	ZeroMemory(mWave_N106.nMixR, 32);
+  /* Reset Tri/Noise/DMC */
+  mWave_TND.nTriStep = mWave_TND.nTriOutput = 0;
+  mWave_TND.nDMCOutput = 0;
+  mWave_TND.bNoiseRandomOut = 0;
+  mWave_Squares.nDutyCount[0] = mWave_Squares.nDutyCount[1] = 0;
+  mWave_TND.bDMCActive = 0;
+  mWave_TND.nDMCBytesRemaining = 0;
+  mWave_TND.bDMCSampleBufferEmpty = 1;
+  mWave_TND.bDMCDeltaSilent = 1;
 
-	/*	Reset FME-07	*/
-	mWave_FME07[0].nVolume = 0;
-	mWave_FME07[1].nVolume = 0;
-	mWave_FME07[2].nVolume = 0;
+  /* Reset VRC6 */
+  mWave_VRC6Pulse[0].nVolume = 0;
+  mWave_VRC6Pulse[1].nVolume = 0;
+  mWave_VRC6Saw.nAccumRate = 0;
 
-	/*	Clear FDS crap		*/
-	mWave_FDS.bEnvelopeEnable = 0;
-	mWave_FDS.nEnvelopeSpeed = 0xFF;
-	mWave_FDS.nVolEnv_Mode = 2;
-	mWave_FDS.nVolEnv_Decay = 0;
-	mWave_FDS.nVolEnv_Gain = 0;
-	mWave_FDS.nVolume = 0;
-	mWave_FDS.bVolEnv_On = 0;
-	mWave_FDS.nSweep_Mode = 2;
-	mWave_FDS.nSweep_Decay = 0;
-	mWave_FDS.nSweep_Gain = 0;
-	mWave_FDS.bSweepEnv_On = 0;
-	mWave_FDS.nSweepBias = 0;
-	mWave_FDS.bLFO_Enabled = 0;
-	mWave_FDS.nLFO_Freq.W = 0;
-	mWave_FDS.fLFO_Timer = 0;
-	mWave_FDS.fLFO_Count = 0;
-	mWave_FDS.nLFO_Addr = 0;
-	mWave_FDS.bLFO_On = 0;
-	mWave_FDS.nMainVolume = 0;
-	mWave_FDS.bEnabled = 0;
-	mWave_FDS.nFreq.W = 0;
-	mWave_FDS.fFreqCount = 0;
-	mWave_FDS.nMainAddr = 0;
-	mWave_FDS.bWaveWrite = 0;
-	mWave_FDS.bMain_On = 0;
-	mWave_FDS.nMixL = mWave_FDS.nMixR = 0;
-	ZeroMemory(mWave_FDS.nWaveTable, 0x40);
-	ZeroMemory(mWave_FDS.nLFO_Table, 0x40);
+  /* Reset MMC5 */
+  mWave_MMC5Square[0].nVolume = 0;
+  mWave_MMC5Square[1].nVolume = 0;
+  mWave_MMC5Voice.nOutput = 0;
 
-	mWave_FDS.nSweep_Count = mWave_FDS.nSweep_Timer = ((mWave_FDS.nSweep_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
-	mWave_FDS.nVolEnv_Count = mWave_FDS.nVolEnv_Timer = ((mWave_FDS.nVolEnv_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
+  /* Reset N106 */
+  ZeroMemory(mWave_N106.nRAM, 0x100);
+  ZeroMemory(mWave_N106.nVolume, 8);
+  ZeroMemory(mWave_N106.nOutput, 8);
+  ZeroMemory(mWave_N106.nMixL, 32);
+  ZeroMemory(mWave_N106.nMixR, 32);
 
-	nDownsample = 0;
-	if (nExternalSound & EXTSOUND_VRC7)
-		VRC7_Reset();
+  /* Reset FME-07 */
+  mWave_FME07[0].nVolume = 0;
+  mWave_FME07[1].nVolume = 0;
+  mWave_FME07[2].nVolume = 0;
 
-	nFilterAccL = 0;
-	nFilterAccR = 0;
-	nFilterAcc2L = 0;
-	nFilterAcc2R = 0;
-	nSmPrevL = 0;
-	nSmAccL = 0;
-	nSmPrevR = 0;
-	nSmAccR = 0;
+  /* Clear FDS crap  */
+  mWave_FDS.bEnvelopeEnable = 0;
+  mWave_FDS.nEnvelopeSpeed = 0xFF;
+  mWave_FDS.nVolEnv_Mode = 2;
+  mWave_FDS.nVolEnv_Decay = 0;
+  mWave_FDS.nVolEnv_Gain = 0;
+  mWave_FDS.nVolume = 0;
+  mWave_FDS.bVolEnv_On = 0;
+  mWave_FDS.nSweep_Mode = 2;
+  mWave_FDS.nSweep_Decay = 0;
+  mWave_FDS.nSweep_Gain = 0;
+  mWave_FDS.bSweepEnv_On = 0;
+  mWave_FDS.nSweepBias = 0;
+  mWave_FDS.bLFO_Enabled = 0;
+  mWave_FDS.nLFO_Freq.W = 0;
+  mWave_FDS.fLFO_Timer = 0;
+  mWave_FDS.fLFO_Count = 0;
+  mWave_FDS.nLFO_Addr = 0;
+  mWave_FDS.bLFO_On = 0;
+  mWave_FDS.nMainVolume = 0;
+  mWave_FDS.bEnabled = 0;
+  mWave_FDS.nFreq.W = 0;
+  mWave_FDS.fFreqCount = 0;
+  mWave_FDS.nMainAddr = 0;
+  mWave_FDS.bWaveWrite = 0;
+  mWave_FDS.bMain_On = 0;
+  mWave_FDS.nMixL = mWave_FDS.nMixR = 0;
+  ZeroMemory(mWave_FDS.nWaveTable, 0x40);
+  ZeroMemory(mWave_FDS.nLFO_Table, 0x40);
+
+  mWave_FDS.nSweep_Count = mWave_FDS.nSweep_Timer = ((mWave_FDS.nSweep_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
+  mWave_FDS.nVolEnv_Count = mWave_FDS.nVolEnv_Timer = ((mWave_FDS.nVolEnv_Decay + 1) * mWave_FDS.nEnvelopeSpeed * 8);
+
+  nDownsample = 0;
+  if (nExternalSound & EXTSOUND_VRC7)
+    VRC7_Reset();
+
+  nFilterAccL = 0;
+  nFilterAccR = 0;
+  nFilterAcc2L = 0;
+  nFilterAcc2R = 0;
+  nSmPrevL = 0;
+  nSmAccL = 0;
+  nSmPrevR = 0;
+  nSmAccR = 0;
 }
 
 /*
- *	SetPlaybackOptions
+ *  SetPlaybackOptions
  */
 
 int CNSFCore::SetPlaybackOptions(int samplerate, int channels)
 {
-	WaitForSamples();
-	if (samplerate < 2000)					return 0;
-	if (samplerate > 96000)					return 0;
-	if ((channels != 1) && (channels != 2))	return 0;
+  WaitForSamples();
+  if (samplerate < 2000)  return 0;
+  if (samplerate > 96000)  return 0;
+  if ((channels != 1) && (channels != 2))  return 0;
 
-	nSampleRate = samplerate;
-	nMonoStereo = channels;
+  nSampleRate = samplerate;
+  nMonoStereo = channels;
 
-	fTicksPerSample = (bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY) / samplerate;
-	fTicksUntilNextSample = fTicksPerSample;
-	RebuildOutputTables((UINT)(-1));
+  fTicksPerSample = (bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY) / samplerate;
+  fTicksUntilNextSample = fTicksPerSample;
+  RebuildOutputTables((UINT)(-1));
 
-	RecalcFilter();
+  RecalcFilter();
 
-	if (bFileLoaded && (nExternalSound & EXTSOUND_VRC7))
-		VRC7_Init();
+  if (bFileLoaded && (nExternalSound & EXTSOUND_VRC7))
+    VRC7_Init();
 
-	return 1;
+  return 1;
 }
 
 /*
- *	SetPlaybackSpeed
+ *  SetPlaybackSpeed
  */
 
 void CNSFCore::SetPlaybackSpeed(float playspersec)
 {
-	WaitForSamples();
-	if (playspersec < 1)
-	{
-		if (!bFileLoaded)	return;
-		playspersec = fNSFPlaybackSpeed;
-	}
+  WaitForSamples();
+  if (playspersec < 1)
+  {
+    if (!bFileLoaded)  return;
+    playspersec = fNSFPlaybackSpeed;
+  }
 
-	fTicksPerPlay = fTicksUntilNextPlay = (bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY) / playspersec;
+  fTicksPerPlay = fTicksUntilNextPlay = (bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY) / playspersec;
 }
 
 /*
- *	SetMasterVolume
+ *  SetMasterVolume
  */
 
 void CNSFCore::SetMasterVolume(float vol)
 {
-	WaitForSamples();
-	fMasterVolume = vol;
-	RebuildOutputTables((UINT)(-1));
+  WaitForSamples();
+  fMasterVolume = vol;
+  RebuildOutputTables((UINT)(-1));
 }
 
 /*
- *	SetChannelOptions
+ *  SetChannelOptions
  */
 
 void CNSFCore::SetChannelOptions(UINT chan, int mix, int vol, int pan, int inv)
 {
-	BYTE bRebuild = 0;
+  BYTE bRebuild = 0;
 
-	WaitForSamples();
-	if (chan >= 29)
-		return;
-	if ((mix == 0) || (mix == 1))
-	{
-		switch (chan)
-		{
-		case 0:
-			mWave_Squares.bChannelMix[0] = mix;
-			break;
-		case 1:
-			mWave_Squares.bChannelMix[1] = mix;
-			break;
-		case 2:
-			mWave_TND.bTriChannelMix = mix;
-			break;
-		case 3:
-			mWave_TND.bNoiseChannelMix = mix;
-			break;
-		case 4:
-			mWave_TND.bDMCChannelMix = mix;
-			break;
-		default:
-			bChannelMix[chan - 5] = mix;
-			break;
-		}
-	}
+  WaitForSamples();
+  if (chan >= 29)
+    return;
+  if ((mix == 0) || (mix == 1))
+  {
+    switch (chan)
+    {
+    case 0:
+      mWave_Squares.bChannelMix[0] = mix;
+      break;
+    case 1:
+      mWave_Squares.bChannelMix[1] = mix;
+      break;
+    case 2:
+      mWave_TND.bTriChannelMix = mix;
+      break;
+    case 3:
+      mWave_TND.bNoiseChannelMix = mix;
+      break;
+    case 4:
+      mWave_TND.bDMCChannelMix = mix;
+      break;
+    default:
+      bChannelMix[chan - 5] = mix;
+      break;
+    }
+  }
 
-	if ((vol >= 0) && (vol <= 255))
-	{
-		nChannelVol[chan] = vol;
-		bRebuild = 1;
-	}
+  if ((vol >= 0) && (vol <= 255))
+  {
+    nChannelVol[chan] = vol;
+    bRebuild = 1;
+  }
 
-	if ((pan >= -127) && (pan <= 127))
-	{
-		nChannelPan[chan] = pan;
-		if (nMonoStereo == 2)
-			bRebuild = 1;
-	}
+  if ((pan >= -127) && (pan <= 127))
+  {
+    nChannelPan[chan] = pan;
+    if (nMonoStereo == 2)
+      bRebuild = 1;
+  }
 
-	if ((inv >= 0) && (inv <= 1))
-	{
-		if (chan < 2)
-		{
-			if (inv)	mWave_Squares.bInvert |= (1 << chan);
-			else	mWave_Squares.bInvert &= ~(1 << chan);
-		}
-		else if (chan < 5)
-		{
-			if (inv)	mWave_TND.bInvert |= (1 << (chan - 2));
-			else	mWave_TND.bInvert &= ~(1 << (chan - 2));
-		}
-		else
-		{
-			switch (chan)
-			{
-			case 5:	mWave_VRC6Pulse[0].bInvert = (BYTE)inv; break;
-			case 6:	mWave_VRC6Pulse[1].bInvert = (BYTE)inv; break;
-			case 7:	mWave_VRC6Saw.bInvert = (BYTE)inv; break;
-			case 8: mWave_MMC5Square[0].bInvert = (BYTE)inv; break;
-			case 9: mWave_MMC5Square[1].bInvert = (BYTE)inv; break;
-			case 10: mWave_MMC5Voice.bInvert = (BYTE)inv; break;
-			case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18:
-				mWave_N106.bInvert[chan - 11] = (BYTE)inv; break;
-			case 19: case 20: case 21: case 22: case 23: case 24:
-				bVRC7Inv[chan - 19] = inv;
-				VRC7_ChangeInversion(chan - 19, inv);
-				break;
-			case 25: mWave_FME07[0].bInvert = (BYTE)inv; break;
-			case 26: mWave_FME07[1].bInvert = (BYTE)inv; break;
-			case 27: mWave_FME07[2].bInvert = (BYTE)inv; break;
-			case 28: mWave_FDS.bInvert = (BYTE)inv; break;
-			}
-		}
-	}
+  if ((inv >= 0) && (inv <= 1))
+  {
+    if (chan < 2)
+    {
+      if (inv)  mWave_Squares.bInvert |= (1 << chan);
+      else  mWave_Squares.bInvert &= ~(1 << chan);
+    }
+    else if (chan < 5)
+    {
+      if (inv)  mWave_TND.bInvert |= (1 << (chan - 2));
+      else  mWave_TND.bInvert &= ~(1 << (chan - 2));
+    }
+    else
+    {
+      switch (chan)
+      {
+      case 5:  mWave_VRC6Pulse[0].bInvert = (BYTE)inv; break;
+      case 6:  mWave_VRC6Pulse[1].bInvert = (BYTE)inv; break;
+      case 7:  mWave_VRC6Saw.bInvert = (BYTE)inv; break;
+      case 8: mWave_MMC5Square[0].bInvert = (BYTE)inv; break;
+      case 9: mWave_MMC5Square[1].bInvert = (BYTE)inv; break;
+      case 10: mWave_MMC5Voice.bInvert = (BYTE)inv; break;
+      case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18:
+        mWave_N106.bInvert[chan - 11] = (BYTE)inv; break;
+      case 19: case 20: case 21: case 22: case 23: case 24:
+        bVRC7Inv[chan - 19] = inv;
+        VRC7_ChangeInversion(chan - 19, inv);
+        break;
+      case 25: mWave_FME07[0].bInvert = (BYTE)inv; break;
+      case 26: mWave_FME07[1].bInvert = (BYTE)inv; break;
+      case 27: mWave_FME07[2].bInvert = (BYTE)inv; break;
+      case 28: mWave_FDS.bInvert = (BYTE)inv; break;
+      }
+    }
+  }
 
-	if (bRebuild)
-		RebuildOutputTables(1 << chan);
+  if (bRebuild)
+    RebuildOutputTables(1 << chan);
 }
 
 /*
- *	SetAdvancedOptions
+ *  SetAdvancedOptions
  */
 
 void CNSFCore::SetAdvancedOptions(const NSF_ADVANCEDOPTIONS* opt)
 {
-	WaitForSamples();
-	if (!opt)	return;
+  WaitForSamples();
+  if (!opt)  return;
 
-	mWave_FDS.bPopReducer = opt->bFDSPopReducer;
-	bDMCPopReducer = opt->bDMCPopReducer;
-	nForce4017Write = opt->nForce4017Write;
-	bN106PopReducer = opt->bN106PopReducer;
-	bIgnore4011Writes = opt->bIgnore4011Writes;
-	bIgnoreBRK = opt->bIgnoreBRK;
-	bIgnoreIllegalOps = opt->bIgnoreIllegalOps;
-	bNoWaitForReturn = opt->bNoWaitForReturn;
-	bPALPreference = opt->bPALPreference;
-	bCleanAXY = opt->bCleanAXY;
-	bResetDuty = opt->bResetDuty;
+  mWave_FDS.bPopReducer = opt->bFDSPopReducer;
+  bDMCPopReducer = opt->bDMCPopReducer;
+  nForce4017Write = opt->nForce4017Write;
+  bN106PopReducer = opt->bN106PopReducer;
+  bIgnore4011Writes = opt->bIgnore4011Writes;
+  bIgnoreBRK = opt->bIgnoreBRK;
+  bIgnoreIllegalOps = opt->bIgnoreIllegalOps;
+  bNoWaitForReturn = opt->bNoWaitForReturn;
+  bPALPreference = opt->bPALPreference;
+  bCleanAXY = opt->bCleanAXY;
+  bResetDuty = opt->bResetDuty;
 
-	bHighPassEnabled = opt->bHighPassEnabled;
-	bLowPassEnabled = opt->bLowPassEnabled;
-	bPrePassEnabled = opt->bPrePassEnabled;
+  bHighPassEnabled = opt->bHighPassEnabled;
+  bLowPassEnabled = opt->bLowPassEnabled;
+  bPrePassEnabled = opt->bPrePassEnabled;
 
-	nHighPassBase = opt->nHighPassBase;
-	nLowPassBase = opt->nLowPassBase;
-	nPrePassBase = opt->nPrePassBase;
-	if (nHighPassBase < 50)				nHighPassBase = 50;
-	if (nHighPassBase > 5000)			nHighPassBase = 5000;
-	if (nLowPassBase < 8000)				nLowPassBase = 8000;
-	if (nLowPassBase > 60000)			nLowPassBase = 60000;
-	if (nPrePassBase < 0)				nPrePassBase = 0;
-	if (nPrePassBase > 1000)				nPrePassBase = 1000;
-	RecalcFilter();
+  nHighPassBase = opt->nHighPassBase;
+  nLowPassBase = opt->nLowPassBase;
+  nPrePassBase = opt->nPrePassBase;
+  if (nHighPassBase < 50)  nHighPassBase = 50;
+  if (nHighPassBase > 5000)  nHighPassBase = 5000;
+  if (nLowPassBase < 8000)  nLowPassBase = 8000;
+  if (nLowPassBase > 60000)  nLowPassBase = 60000;
+  if (nPrePassBase < 0)  nPrePassBase = 0;
+  if (nPrePassBase > 1000)  nPrePassBase = 1000;
+  RecalcFilter();
 
-	/*
-	 *	Frequency Cutoff
-	 */
+  /*
+  *  Frequency Cutoff
+  */
 
-	if (nInvertCutoffHz != opt->nInvertCutoffHz)
-		RecalculateInvertFreqs(opt->nInvertCutoffHz);
+  if (nInvertCutoffHz != opt->nInvertCutoffHz)
+    RecalculateInvertFreqs(opt->nInvertCutoffHz);
 }
 
 void CNSFCore::RecalculateInvertFreqs(int cutoff)
 {
-	nInvertCutoffHz = cutoff;
+  nInvertCutoffHz = cutoff;
 
-	if (nInvertCutoffHz > 0)
-	{
-		// All calculations are approximate.. no need for precision here
-		float base = (bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY);
+  if (nInvertCutoffHz > 0)
+  {
+    // All calculations are approximate.. no need for precision here
+    float base = (bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY);
 
-		// Square frequency
-		// Hz = Base / ((Freq + 1) * 16)
-		// Freq = (Base / (16 * Hz)) - 1
-		mWave_Squares.nInvertFreqCutoff = (WORD)(base / (16 * nInvertCutoffHz)) - 1;
+    // Square frequency
+    // Hz = Base / ((Freq + 1) * 16)
+    // Freq = (Base / (16 * Hz)) - 1
+    mWave_Squares.nInvertFreqCutoff = (WORD)(base / (16 * nInvertCutoffHz)) - 1;
 
-		// Tri frequency
-		// Same formula, but 32 steps instead of 16
-		mWave_TND.nInvertFreqCutoff_Tri = (WORD)(base / (32 * nInvertCutoffHz)) - 1;
+    // Tri frequency
+    // Same formula, but 32 steps instead of 16
+    mWave_TND.nInvertFreqCutoff_Tri = (WORD)(base / (32 * nInvertCutoffHz)) - 1;
 
-		// Noise frequency
-		// This is harder since it's a random wavelength and thus no real frequency
-		// Use same freq as Squares
-		mWave_TND.nInvertFreqCutoff_Noise = mWave_Squares.nInvertFreqCutoff;
+    // Noise frequency
+    // This is harder since it's a random wavelength and thus no real frequency
+    // Use same freq as Squares
+    mWave_TND.nInvertFreqCutoff_Noise = mWave_Squares.nInvertFreqCutoff;
 
-		if (!bPALMode)	// No expansion available in PAL mode... don't bother doing the math
-		{
-			// VRC6 Pulses = same frequency as squares
-			mWave_VRC6Pulse[0].nInvertFreqCutoff = mWave_VRC6Pulse[1].nInvertFreqCutoff =
-				mWave_Squares.nInvertFreqCutoff;
+    if (!bPALMode)  // No expansion available in PAL mode... don't bother doing the math
+    {
+      // VRC6 Pulses = same frequency as squares
+      mWave_VRC6Pulse[0].nInvertFreqCutoff = mWave_VRC6Pulse[1].nInvertFreqCutoff =
+        mWave_Squares.nInvertFreqCutoff;
 
-			// VRC6 Saw = same formula, but 14 steps instead of 16
-			mWave_VRC6Saw.nInvertFreqCutoff = (WORD)(base / (14 * nInvertCutoffHz)) - 1;
+      // VRC6 Saw = same formula, but 14 steps instead of 16
+      mWave_VRC6Saw.nInvertFreqCutoff = (WORD)(base / (14 * nInvertCutoffHz)) - 1;
 
-			// MMC5 Squares = same as normal squares
-			mWave_MMC5Square[0].nInvertFreqCutoff = mWave_MMC5Square[1].nInvertFreqCutoff =
-				mWave_Squares.nInvertFreqCutoff;
+      // MMC5 Squares = same as normal squares
+      mWave_MMC5Square[0].nInvertFreqCutoff = mWave_MMC5Square[1].nInvertFreqCutoff =
+        mWave_Squares.nInvertFreqCutoff;
 
-			// N106 Frequencies are a nightmare
-			int i, j;
-			for (i = 0; i < 8; i++)
-			{
-				for (j = 0; j < 8; j++)
-					mWave_N106.nInvertFreqCutoff[i][j] =
-					((0x40000 * 4 * 45) / NES_FREQUENCY) * (i + 1) * (8 - j) * nInvertCutoffHz;
-			}
+      // N106 Frequencies are a nightmare
+      int i, j;
+      for (i = 0; i < 8; i++)
+      {
+        for (j = 0; j < 8; j++)
+          mWave_N106.nInvertFreqCutoff[i][j] =
+          ((0x40000 * 4 * 45) / NES_FREQUENCY) * (i + 1) * (8 - j) * nInvertCutoffHz;
+      }
 
-			// FME-07 uses the normal formula, but is 32 steps instead of 16 (approx. same as tri)
-			mWave_FME07[0].nInvertFreqCutoff = mWave_FME07[1].nInvertFreqCutoff =
-				mWave_FME07[2].nInvertFreqCutoff = mWave_TND.nInvertFreqCutoff_Tri;
-		}
-	}
-	else
-	{
-		mWave_VRC6Saw.nInvertFreqCutoff = mWave_Squares.nInvertFreqCutoff = 0xFFFF;
-		mWave_TND.nInvertFreqCutoff_Tri = mWave_TND.nInvertFreqCutoff_Noise = 0xFFFF;
-		mWave_VRC6Pulse[0].nInvertFreqCutoff = mWave_VRC6Pulse[1].nInvertFreqCutoff = 0xFFFF;
-		mWave_MMC5Square[0].nInvertFreqCutoff = mWave_MMC5Square[1].nInvertFreqCutoff = 0xFFFF;
-		memset(mWave_N106.nInvertFreqCutoff, 0, 4 * 8 * 8);
-		mWave_FME07[0].nInvertFreqCutoff = mWave_FME07[1].nInvertFreqCutoff = 
-		mWave_FME07[2].nInvertFreqCutoff = 0xFFFF;
-	}
-	VRC7_ChangeInversionFreq();
+      // FME-07 uses the normal formula, but is 32 steps instead of 16 (approx. same as tri)
+      mWave_FME07[0].nInvertFreqCutoff = mWave_FME07[1].nInvertFreqCutoff =
+        mWave_FME07[2].nInvertFreqCutoff = mWave_TND.nInvertFreqCutoff_Tri;
+    }
+  }
+  else
+  {
+    mWave_VRC6Saw.nInvertFreqCutoff = mWave_Squares.nInvertFreqCutoff = 0xFFFF;
+    mWave_TND.nInvertFreqCutoff_Tri = mWave_TND.nInvertFreqCutoff_Noise = 0xFFFF;
+    mWave_VRC6Pulse[0].nInvertFreqCutoff = mWave_VRC6Pulse[1].nInvertFreqCutoff = 0xFFFF;
+    mWave_MMC5Square[0].nInvertFreqCutoff = mWave_MMC5Square[1].nInvertFreqCutoff = 0xFFFF;
+    memset(mWave_N106.nInvertFreqCutoff, 0, 4 * 8 * 8);
+    mWave_FME07[0].nInvertFreqCutoff = mWave_FME07[1].nInvertFreqCutoff =
+      mWave_FME07[2].nInvertFreqCutoff = 0xFFFF;
+  }
+  VRC7_ChangeInversionFreq();
 }
 
 void CNSFCore::WaitForSamples()
 {
-	while (bIsGeneratingSamples)
-		Sleep(10);
+  while (bIsGeneratingSamples)
+    Sleep(10);
 }
 /*
-*	GetPlaybackSpeed
+*  GetPlaybackSpeed
 */
 
 float CNSFCore::GetPlaybackSpeed()
 {
-	if (fTicksPerPlay <= 0)	return 0;
-	return ((bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY) / fTicksPerPlay);
+  if (fTicksPerPlay <= 0)  return 0;
+  return ((bPALMode ? PAL_FREQUENCY : NTSC_FREQUENCY) / fTicksPerPlay);
 }
 
 /*
-*	GetMasterVolume
+*  GetMasterVolume
 */
 
 float CNSFCore::GetMasterVolume()
 {
-	return fMasterVolume;
+  return fMasterVolume;
 }
 
 /*
- *	GetAdvancedOptions
+ *  GetAdvancedOptions
  */
 
 void CNSFCore::GetAdvancedOptions(NSF_ADVANCEDOPTIONS* opt)
 {
-	if (opt == NULL)
-		return;
-	opt->bDMCPopReducer = bDMCPopReducer;
-	opt->nForce4017Write = nForce4017Write;
-	opt->bN106PopReducer = bN106PopReducer;
-	opt->bFDSPopReducer = mWave_FDS.bPopReducer;
-	opt->nInvertCutoffHz = nInvertCutoffHz;
-	opt->bIgnore4011Writes = bIgnore4011Writes;
-	opt->bIgnoreBRK = bIgnoreBRK;
-	opt->bIgnoreIllegalOps = bIgnoreIllegalOps;
-	opt->bNoWaitForReturn = bNoWaitForReturn;
-	opt->bPALPreference = bPALPreference;
-	opt->bCleanAXY = bCleanAXY;
-	opt->nHighPassBase = nHighPassBase;
-	opt->nLowPassBase = nLowPassBase;
-	opt->nPrePassBase = nPrePassBase;
-	opt->bHighPassEnabled = bHighPassEnabled;
-	opt->bLowPassEnabled = bLowPassEnabled;
-	opt->bPrePassEnabled = bPrePassEnabled;
-	opt->bResetDuty = bResetDuty;
+  if (opt == NULL)
+    return;
+  opt->bDMCPopReducer = bDMCPopReducer;
+  opt->nForce4017Write = nForce4017Write;
+  opt->bN106PopReducer = bN106PopReducer;
+  opt->bFDSPopReducer = mWave_FDS.bPopReducer;
+  opt->nInvertCutoffHz = nInvertCutoffHz;
+  opt->bIgnore4011Writes = bIgnore4011Writes;
+  opt->bIgnoreBRK = bIgnoreBRK;
+  opt->bIgnoreIllegalOps = bIgnoreIllegalOps;
+  opt->bNoWaitForReturn = bNoWaitForReturn;
+  opt->bPALPreference = bPALPreference;
+  opt->bCleanAXY = bCleanAXY;
+  opt->nHighPassBase = nHighPassBase;
+  opt->nLowPassBase = nLowPassBase;
+  opt->nPrePassBase = nPrePassBase;
+  opt->bHighPassEnabled = bHighPassEnabled;
+  opt->bLowPassEnabled = bLowPassEnabled;
+  opt->bPrePassEnabled = bPrePassEnabled;
+  opt->bResetDuty = bResetDuty;
 }
 
 /*
- *	RecalcFilter
+ *  RecalcFilter
  */
 
 void CNSFCore::RecalcFilter()
 {
-	if (!nSampleRate) return;
+  if (!nSampleRate) return;
 
-	nHighPass = ((__int64)nHighPassBase << 16) / nSampleRate;
-	nLowPass = ((__int64)nLowPassBase << 16) / nSampleRate;
+  nHighPass = ((__int64)nHighPassBase << 16) / nSampleRate;
+  nLowPass = ((__int64)nLowPassBase << 16) / nSampleRate;
 
-	if (nHighPass > (1 << 16)) nHighPass = 1 << 16;
-	if (nLowPass > (1 << 16)) nLowPass = 1 << 16;
+  if (nHighPass > (1 << 16)) nHighPass = 1 << 16;
+  if (nLowPass > (1 << 16)) nLowPass = 1 << 16;
 
-	fSmDiv = (100 - nPrePassBase) / 100.0f;
+  fSmDiv = (100 - nPrePassBase) / 100.0f;
 }
 
 /*
- *	CalculateChannelVolume
+ *  CalculateChannelVolume
  */
 
 void CNSFCore::CalculateChannelVolume(int maxvol, int& left, int& right, BYTE vol, char pan)
 {
-	left = right = (int)(maxvol * vol * fMasterVolume);
+  left = right = (int)(maxvol * vol * fMasterVolume);
 
-	if (nMonoStereo == 2)
-	{
-		if (pan < 0)		right = (right * (127 + pan)) / 127;
-		if (pan > 0)		left = (left  * (127 - pan)) / 127;
-	}
+  if (nMonoStereo == 2)
+  {
+    if (pan < 0)  right = (right * (127 + pan)) / 127;
+    if (pan > 0)  left = (left  * (127 - pan)) / 127;
+  }
 
-	left /= 255;
-	right /= 255;
+  left /= 255;
+  right /= 255;
 
-	if (left > 32767)		left = 32767;
-	if (right > 32767)		right = 32767;
-	if (left < -32768)		left = -32768;
-	if (right < -32768)		right = -32768;
+  if (left > 32767)  left = 32767;
+  if (right > 32767)  right = 32767;
+  if (left < -32768)  left = -32768;
+  if (right < -32768)  right = -32768;
 }
 
 
 /*
- *	RebuildOutputTables
+ *  RebuildOutputTables
  */
 
 void CNSFCore::RebuildOutputTables(UINT chans)
 {
-	int i, j;
-	float l[3];
-	float r[3];
-	int v;
-	int temp;
-	int tl, tr;
-	float ftemp;
+  int i, j;
+  float l[3];
+  float r[3];
+  int v;
+  int temp;
+  int tl, tr;
+  float ftemp;
 
-	if (chans & 0x00000003)		// squares
-	{
-		for (i = 0; i < 2; i++)
-		{
-			l[i] = r[i] = nChannelVol[i];
-			if (nMonoStereo == 2)
-			{
-				if (nChannelPan[i] < 0)		r[i] = (r[i] * (127 + nChannelPan[i])) / 127.0f;
-				if (nChannelPan[i] > 0)		l[i] = (l[i] * (127 - nChannelPan[i])) / 127.0f;
-			}
-		}
+  if (chans & 0x00000003)  // squares
+  {
+    for (i = 0; i < 2; i++)
+    {
+      l[i] = r[i] = nChannelVol[i];
+      if (nMonoStereo == 2)
+      {
+        if (nChannelPan[i] < 0)  r[i] = (r[i] * (127 + nChannelPan[i])) / 127.0f;
+        if (nChannelPan[i] > 0)  l[i] = (l[i] * (127 - nChannelPan[i])) / 127.0f;
+      }
+    }
 
-		v = (int)(1438200 * fMasterVolume);
+    v = (int)(1438200 * fMasterVolume);
 
-		for (i = 0; i < 0x100; i++)
-		{
-			temp = (int)(l[0] * (i >> 4));
-			temp += (int)(l[1] * (i & 0x0F));
+    for (i = 0; i < 0x100; i++)
+    {
+      temp = (int)(l[0] * (i >> 4));
+      temp += (int)(l[1] * (i & 0x0F));
 
-			if (!temp)
-				mWave_Squares.nOutputTable_L[i] = 0;
-			else
-				mWave_Squares.nOutputTable_L[i] = v / ((2072640 / temp) + 100);
+      if (!temp)
+        mWave_Squares.nOutputTable_L[i] = 0;
+      else
+        mWave_Squares.nOutputTable_L[i] = v / ((2072640 / temp) + 100);
 
-			temp = (int)(r[0] * (i >> 4));
-			temp += (int)(r[1] * (i & 0x0F));
-			if (!temp)			mWave_Squares.nOutputTable_R[0][i] = 0;
-			else if (temp < 0)	mWave_Squares.nOutputTable_R[0][i] = v / ((2072640 / temp) - 100);
-			else				mWave_Squares.nOutputTable_R[0][i] = v / ((2072640 / temp) + 100);
+      temp = (int)(r[0] * (i >> 4));
+      temp += (int)(r[1] * (i & 0x0F));
+      if (!temp)  mWave_Squares.nOutputTable_R[0][i] = 0;
+      else if (temp < 0)  mWave_Squares.nOutputTable_R[0][i] = v / ((2072640 / temp) - 100);
+      else  mWave_Squares.nOutputTable_R[0][i] = v / ((2072640 / temp) + 100);
 
-			temp = (int)(r[1] * (i & 0x0F));
-			temp -= (int)(r[0] * (i >> 4));
-			if (!temp)			mWave_Squares.nOutputTable_R[1][i] = 0;
-			else if (temp < 0)	mWave_Squares.nOutputTable_R[1][i] = v / ((2072640 / temp) - 100);
-			else				mWave_Squares.nOutputTable_R[1][i] = v / ((2072640 / temp) + 100);
+      temp = (int)(r[1] * (i & 0x0F));
+      temp -= (int)(r[0] * (i >> 4));
+      if (!temp)  mWave_Squares.nOutputTable_R[1][i] = 0;
+      else if (temp < 0)  mWave_Squares.nOutputTable_R[1][i] = v / ((2072640 / temp) - 100);
+      else  mWave_Squares.nOutputTable_R[1][i] = v / ((2072640 / temp) + 100);
 
-			temp = (int)(r[0] * (i >> 4));
-			temp -= (int)(r[1] * (i & 0x0F));
-			if (!temp)			mWave_Squares.nOutputTable_R[2][i] = 0;
-			else if (temp < 0)	mWave_Squares.nOutputTable_R[2][i] = v / ((2072640 / temp) - 100);
-			else				mWave_Squares.nOutputTable_R[2][i] = v / ((2072640 / temp) + 100);
-		}
-	}
-	if (chans & 0x0000001C)		// Tri/Noise/DMC
-	{
-		if (mWave_TND.nOutputTable_L && mWave_TND.nOutputTable_R)
-		{
-			for (i = 0; i < 3; i++)
-			{
-				l[i] = r[i] = nChannelVol[i + 2];
-				if (nMonoStereo == 2)
-				{
-					if (nChannelPan[i + 2] < 0)		r[i] = (r[i] * (127 + nChannelPan[i + 2])) / 127.0f;
-					if (nChannelPan[i + 2] > 0)		l[i] = (l[i] * (127 - nChannelPan[i + 2])) / 127.0f;
-				}
-			}
+      temp = (int)(r[0] * (i >> 4));
+      temp -= (int)(r[1] * (i & 0x0F));
+      if (!temp)  mWave_Squares.nOutputTable_R[2][i] = 0;
+      else if (temp < 0)  mWave_Squares.nOutputTable_R[2][i] = v / ((2072640 / temp) - 100);
+      else  mWave_Squares.nOutputTable_R[2][i] = v / ((2072640 / temp) + 100);
+    }
+  }
+  if (chans & 0x0000001C)  // Tri/Noise/DMC
+  {
+    if (mWave_TND.nOutputTable_L && mWave_TND.nOutputTable_R)
+    {
+      for (i = 0; i < 3; i++)
+      {
+        l[i] = r[i] = nChannelVol[i + 2];
+        if (nMonoStereo == 2)
+        {
+          if (nChannelPan[i + 2] < 0)  r[i] = (r[i] * (127 + nChannelPan[i + 2])) / 127.0f;
+          if (nChannelPan[i + 2] > 0)  l[i] = (l[i] * (127 - nChannelPan[i + 2])) / 127.0f;
+        }
+      }
 
-			v = (int)(2396850 * fMasterVolume);
-			for (i = 0; i < 0x8000; i++)
-			{
-				ftemp = (l[0] * (i >> 11)) / 2097885;
-				ftemp += (l[1] * ((i >> 7) & 0x0F)) / 3121455;
-				ftemp += (l[2] * (i & 0x7F)) / 5772690;
+      v = (int)(2396850 * fMasterVolume);
+      for (i = 0; i < 0x8000; i++)
+      {
+        ftemp = (l[0] * (i >> 11)) / 2097885;
+        ftemp += (l[1] * ((i >> 7) & 0x0F)) / 3121455;
+        ftemp += (l[2] * (i & 0x7F)) / 5772690;
 
-				if (!ftemp)
-					mWave_TND.nOutputTable_L[i] = 0;
-				else
-					mWave_TND.nOutputTable_L[i] = (short)(v / ((1.0f / ftemp) + 100));
+        if (!ftemp)
+          mWave_TND.nOutputTable_L[i] = 0;
+        else
+          mWave_TND.nOutputTable_L[i] = (short)(v / ((1.0f / ftemp) + 100));
 
-				ftemp = (r[0] * (i >> 11)) / 2097885;
-				ftemp += (r[1] * ((i >> 7) & 0x0F)) / 3121455;
-				ftemp += (r[2] * (i & 0x7F)) / 5772690;
-				if (!ftemp)			mWave_TND.nOutputTable_R[0x00000 + i] = 0;
-				else if (ftemp < 0)	mWave_TND.nOutputTable_R[0x00000 + i] = (short)(v / ((1.0f / ftemp) - 100));
-				else				mWave_TND.nOutputTable_R[0x00000 + i] = (short)(v / ((1.0f / ftemp) + 100));
+        ftemp = (r[0] * (i >> 11)) / 2097885;
+        ftemp += (r[1] * ((i >> 7) & 0x0F)) / 3121455;
+        ftemp += (r[2] * (i & 0x7F)) / 5772690;
+        if (!ftemp)  mWave_TND.nOutputTable_R[0x00000 + i] = 0;
+        else if (ftemp < 0)  mWave_TND.nOutputTable_R[0x00000 + i] = (short)(v / ((1.0f / ftemp) - 100));
+        else  mWave_TND.nOutputTable_R[0x00000 + i] = (short)(v / ((1.0f / ftemp) + 100));
 
-				ftemp = (r[0] * (i >> 11)) / -2097885;
-				ftemp += (r[1] * ((i >> 7) & 0x0F)) / 3121455;
-				ftemp += (r[2] * (i & 0x7F)) / 5772690;
-				if (!ftemp)			mWave_TND.nOutputTable_R[0x08000 + i] = 0;
-				else if (ftemp < 0)	mWave_TND.nOutputTable_R[0x08000 + i] = (short)(v / ((1.0f / ftemp) - 100));
-				else				mWave_TND.nOutputTable_R[0x08000 + i] = (short)(v / ((1.0f / ftemp) + 100));
+        ftemp = (r[0] * (i >> 11)) / -2097885;
+        ftemp += (r[1] * ((i >> 7) & 0x0F)) / 3121455;
+        ftemp += (r[2] * (i & 0x7F)) / 5772690;
+        if (!ftemp)  mWave_TND.nOutputTable_R[0x08000 + i] = 0;
+        else if (ftemp < 0)  mWave_TND.nOutputTable_R[0x08000 + i] = (short)(v / ((1.0f / ftemp) - 100));
+        else  mWave_TND.nOutputTable_R[0x08000 + i] = (short)(v / ((1.0f / ftemp) + 100));
 
-				ftemp = (r[0] * (i >> 11)) / 2097885;
-				ftemp -= (r[1] * ((i >> 7) & 0x0F)) / 3121455;
-				ftemp += (r[2] * (i & 0x7F)) / 5772690;
-				if (!ftemp)			mWave_TND.nOutputTable_R[0x10000 + i] = 0;
-				else if (ftemp < 0)	mWave_TND.nOutputTable_R[0x10000 + i] = (short)(v / ((1.0f / ftemp) - 100));
-				else				mWave_TND.nOutputTable_R[0x10000 + i] = (short)(v / ((1.0f / ftemp) + 100));
+        ftemp = (r[0] * (i >> 11)) / 2097885;
+        ftemp -= (r[1] * ((i >> 7) & 0x0F)) / 3121455;
+        ftemp += (r[2] * (i & 0x7F)) / 5772690;
+        if (!ftemp)  mWave_TND.nOutputTable_R[0x10000 + i] = 0;
+        else if (ftemp < 0)  mWave_TND.nOutputTable_R[0x10000 + i] = (short)(v / ((1.0f / ftemp) - 100));
+        else  mWave_TND.nOutputTable_R[0x10000 + i] = (short)(v / ((1.0f / ftemp) + 100));
 
-				ftemp = (r[0] * (i >> 11)) / -2097885;
-				ftemp -= (r[1] * ((i >> 7) & 0x0F)) / 3121455;
-				ftemp += (r[2] * (i & 0x7F)) / 5772690;
-				if (!ftemp)			mWave_TND.nOutputTable_R[0x18000 + i] = 0;
-				else if (ftemp < 0)	mWave_TND.nOutputTable_R[0x18000 + i] = (short)(v / ((1.0f / ftemp) - 100));
-				else				mWave_TND.nOutputTable_R[0x18000 + i] = (short)(v / ((1.0f / ftemp) + 100));
-			}
-		}
-	}
-	if (chans & 0x00000020)		// VRC6 Pulse 1
-	{
-		CalculateChannelVolume(1875, tl, tr, nChannelVol[5], nChannelPan[5]);
-		for (i = 0; i < 0x10; i++)
-		{
-			mWave_VRC6Pulse[0].nOutputTable_L[i] = tl * i / 0x0F;
-			mWave_VRC6Pulse[0].nOutputTable_R[i] = tr * i / 0x0F;
-		}
-	}
-	if (chans & 0x00000040)		// VRC6 Pulse 2
-	{
-		CalculateChannelVolume(1875, tl, tr, nChannelVol[6], nChannelPan[6]);
-		for (i = 0; i < 0x10; i++)
-		{
-			mWave_VRC6Pulse[1].nOutputTable_L[i] = tl * i / 0x0F;
-			mWave_VRC6Pulse[1].nOutputTable_R[i] = tr * i / 0x0F;
-		}
-	}
-	if (chans & 0x00000080)		// VRC6 Saw
-	{
-		CalculateChannelVolume(3750, tl, tr, nChannelVol[7], nChannelPan[7]);
-		for (i = 0; i < 0x20; i++)
-		{
-			mWave_VRC6Saw.nOutputTable_L[i] = tl * i / 0x1F;
-			mWave_VRC6Saw.nOutputTable_R[i] = tr * i / 0x1F;
-		}
-	}
+        ftemp = (r[0] * (i >> 11)) / -2097885;
+        ftemp -= (r[1] * ((i >> 7) & 0x0F)) / 3121455;
+        ftemp += (r[2] * (i & 0x7F)) / 5772690;
+        if (!ftemp)  mWave_TND.nOutputTable_R[0x18000 + i] = 0;
+        else if (ftemp < 0)  mWave_TND.nOutputTable_R[0x18000 + i] = (short)(v / ((1.0f / ftemp) - 100));
+        else  mWave_TND.nOutputTable_R[0x18000 + i] = (short)(v / ((1.0f / ftemp) + 100));
+      }
+    }
+  }
+  if (chans & 0x00000020)  // VRC6 Pulse 1
+  {
+    CalculateChannelVolume(1875, tl, tr, nChannelVol[5], nChannelPan[5]);
+    for (i = 0; i < 0x10; i++)
+    {
+      mWave_VRC6Pulse[0].nOutputTable_L[i] = tl * i / 0x0F;
+      mWave_VRC6Pulse[0].nOutputTable_R[i] = tr * i / 0x0F;
+    }
+  }
+  if (chans & 0x00000040)  // VRC6 Pulse 2
+  {
+    CalculateChannelVolume(1875, tl, tr, nChannelVol[6], nChannelPan[6]);
+    for (i = 0; i < 0x10; i++)
+    {
+      mWave_VRC6Pulse[1].nOutputTable_L[i] = tl * i / 0x0F;
+      mWave_VRC6Pulse[1].nOutputTable_R[i] = tr * i / 0x0F;
+    }
+  }
+  if (chans & 0x00000080)  // VRC6 Saw
+  {
+    CalculateChannelVolume(3750, tl, tr, nChannelVol[7], nChannelPan[7]);
+    for (i = 0; i < 0x20; i++)
+    {
+      mWave_VRC6Saw.nOutputTable_L[i] = tl * i / 0x1F;
+      mWave_VRC6Saw.nOutputTable_R[i] = tr * i / 0x1F;
+    }
+  }
 
-	// the 2 MMC5 squares are probably too loud (1875 seems like it -should- be the proper base), but
-	// they seemed way to quiet in contrast to the triangle in Just Breed.  Therefore their base vol
-	// has been bumped up a bit
-	if (chans & 0x00000100)		// MMC5 Square 1
-	{
-		CalculateChannelVolume(2500, tl, tr, nChannelVol[8], nChannelPan[8]);
-		for (i = 0; i < 0x10; i++)
-		{
-			mWave_MMC5Square[0].nOutputTable_L[i] = tl * i / 0x0F;
-			mWave_MMC5Square[0].nOutputTable_R[i] = tr * i / 0x0F;
-		}
-	}
-	if (chans & 0x00000200)		// MMC5 Square 2
-	{
-		CalculateChannelVolume(2500, tl, tr, nChannelVol[9], nChannelPan[9]);
-		for (i = 0; i < 0x10; i++)
-		{
-			mWave_MMC5Square[1].nOutputTable_L[i] = tl * i / 0x0F;
-			mWave_MMC5Square[1].nOutputTable_R[i] = tr * i / 0x0F;
-		}
-	}
-	if (chans & 0x00000400)		// MMC5 Voice
-	{
-		CalculateChannelVolume(15000, tl, tr, nChannelVol[10], nChannelPan[10]);
-		for (i = 0; i < 0x10; i++)
-		{
-			mWave_MMC5Voice.nOutputTable_L[i] = tl * i / 0x7F;
-			mWave_MMC5Voice.nOutputTable_R[i] = tr * i / 0x7F;
-		}
-	}
-	if (chans & 0x0007F800)		// N106 channels
-	{
-		for (v = 0; v < 8; v++)
-		{
-			if (!(chans & (0x800 << v))) continue;
+  // the 2 MMC5 squares are probably too loud (1875 seems like it -should- be the proper base), but
+  // they seemed way to quiet in contrast to the triangle in Just Breed.  Therefore their base vol
+  // has been bumped up a bit
+  if (chans & 0x00000100)  // MMC5 Square 1
+  {
+    CalculateChannelVolume(2500, tl, tr, nChannelVol[8], nChannelPan[8]);
+    for (i = 0; i < 0x10; i++)
+    {
+      mWave_MMC5Square[0].nOutputTable_L[i] = tl * i / 0x0F;
+      mWave_MMC5Square[0].nOutputTable_R[i] = tr * i / 0x0F;
+    }
+  }
+  if (chans & 0x00000200)  // MMC5 Square 2
+  {
+    CalculateChannelVolume(2500, tl, tr, nChannelVol[9], nChannelPan[9]);
+    for (i = 0; i < 0x10; i++)
+    {
+      mWave_MMC5Square[1].nOutputTable_L[i] = tl * i / 0x0F;
+      mWave_MMC5Square[1].nOutputTable_R[i] = tr * i / 0x0F;
+    }
+  }
+  if (chans & 0x00000400)  // MMC5 Voice
+  {
+    CalculateChannelVolume(15000, tl, tr, nChannelVol[10], nChannelPan[10]);
+    for (i = 0; i < 0x10; i++)
+    {
+      mWave_MMC5Voice.nOutputTable_L[i] = tl * i / 0x7F;
+      mWave_MMC5Voice.nOutputTable_R[i] = tr * i / 0x7F;
+    }
+  }
+  if (chans & 0x0007F800)  // N106 channels
+  {
+    for (v = 0; v < 8; v++)
+    {
+      if (!(chans & (0x800 << v))) continue;
 
-			CalculateChannelVolume(3000, tl, tr, nChannelVol[11 + v], nChannelPan[11 + v]);
-			// this amplitude is just a guess =\
+      CalculateChannelVolume(3000, tl, tr, nChannelVol[11 + v], nChannelPan[11 + v]);
+      // this amplitude is just a guess =\
 
-			for (i = 0; i < 0x10; i++)
-			{
-				for (j = 0; j < 0x10; j++)
-				{
-					mWave_N106.nOutputTable_L[v][i][j] = (tl * i * j) / 0xE1;
-					mWave_N106.nOutputTable_R[v][i][j] = (tr * i * j) / 0xE1;
-				}
-			}
-		}
-	}
-	if (chans & 0x01F80000)		// VRC7 channels
-	{
-		if (pFMOPL)
-		{
-			for (v = 0; v < 6; v++)
-			{
-				if (chans & (0x80000 << v))
-					VRC7_RecalcMultiplier((BYTE)v);
-			}
-		}
-	}
+      for (i = 0; i < 0x10; i++)
+      {
+        for (j = 0; j < 0x10; j++)
+        {
+          mWave_N106.nOutputTable_L[v][i][j] = (tl * i * j) / 0xE1;
+          mWave_N106.nOutputTable_R[v][i][j] = (tr * i * j) / 0xE1;
+        }
+      }
+    }
+  }
+  if (chans & 0x01F80000)  // VRC7 channels
+  {
+    if (pFMOPL)
+    {
+      for (v = 0; v < 6; v++)
+      {
+        if (chans & (0x80000 << v))
+          VRC7_RecalcMultiplier((BYTE)v);
+      }
+    }
+  }
 
 
-	if (chans & 0x02000000)		// FME-07 Square A
-	{
-		CalculateChannelVolume(3000, tl, tr, nChannelVol[25], nChannelPan[25]);
-		mWave_FME07[0].nOutputTable_L[15] = tl;
-		mWave_FME07[0].nOutputTable_R[15] = tr;
-		mWave_FME07[0].nOutputTable_L[0] = 0;
-		mWave_FME07[0].nOutputTable_R[0] = 0;
-		for (i = 14; i > 0; i--)
-		{
-			mWave_FME07[0].nOutputTable_L[i] = mWave_FME07[0].nOutputTable_L[i + 1] * 80 / 100;
-			mWave_FME07[0].nOutputTable_R[i] = mWave_FME07[0].nOutputTable_R[i + 1] * 80 / 100;
-		}
-	}
-	if (chans & 0x04000000)		// FME-07 Square B
-	{
-		CalculateChannelVolume(3000, tl, tr, nChannelVol[26], nChannelPan[26]);
-		mWave_FME07[1].nOutputTable_L[15] = tl;
-		mWave_FME07[1].nOutputTable_R[15] = tr;
-		mWave_FME07[1].nOutputTable_L[0] = 0;
-		mWave_FME07[1].nOutputTable_R[0] = 0;
-		for (i = 14; i > 0; i--)
-		{
-			mWave_FME07[1].nOutputTable_L[i] = mWave_FME07[1].nOutputTable_L[i + 1] * 80 / 100;
-			mWave_FME07[1].nOutputTable_R[i] = mWave_FME07[1].nOutputTable_R[i + 1] * 80 / 100;
-		}
-	}
-	if (chans & 0x08000000)		// FME-07 Square C
-	{
-		CalculateChannelVolume(3000, tl, tr, nChannelVol[27], nChannelPan[27]);
-		mWave_FME07[2].nOutputTable_L[15] = tl;
-		mWave_FME07[2].nOutputTable_R[15] = tr;
-		mWave_FME07[2].nOutputTable_L[0] = 0;
-		mWave_FME07[2].nOutputTable_R[0] = 0;
-		for (i = 14; i > 0; i--)
-		{
-			mWave_FME07[2].nOutputTable_L[i] = mWave_FME07[2].nOutputTable_L[i + 1] * 80 / 100;
-			mWave_FME07[2].nOutputTable_R[i] = mWave_FME07[2].nOutputTable_R[i + 1] * 80 / 100;
-		}
-	}
+  if (chans & 0x02000000)  // FME-07 Square A
+  {
+    CalculateChannelVolume(3000, tl, tr, nChannelVol[25], nChannelPan[25]);
+    mWave_FME07[0].nOutputTable_L[15] = tl;
+    mWave_FME07[0].nOutputTable_R[15] = tr;
+    mWave_FME07[0].nOutputTable_L[0] = 0;
+    mWave_FME07[0].nOutputTable_R[0] = 0;
+    for (i = 14; i > 0; i--)
+    {
+      mWave_FME07[0].nOutputTable_L[i] = mWave_FME07[0].nOutputTable_L[i + 1] * 80 / 100;
+      mWave_FME07[0].nOutputTable_R[i] = mWave_FME07[0].nOutputTable_R[i + 1] * 80 / 100;
+    }
+  }
+  if (chans & 0x04000000)  // FME-07 Square B
+  {
+    CalculateChannelVolume(3000, tl, tr, nChannelVol[26], nChannelPan[26]);
+    mWave_FME07[1].nOutputTable_L[15] = tl;
+    mWave_FME07[1].nOutputTable_R[15] = tr;
+    mWave_FME07[1].nOutputTable_L[0] = 0;
+    mWave_FME07[1].nOutputTable_R[0] = 0;
+    for (i = 14; i > 0; i--)
+    {
+      mWave_FME07[1].nOutputTable_L[i] = mWave_FME07[1].nOutputTable_L[i + 1] * 80 / 100;
+      mWave_FME07[1].nOutputTable_R[i] = mWave_FME07[1].nOutputTable_R[i + 1] * 80 / 100;
+    }
+  }
+  if (chans & 0x08000000)  // FME-07 Square C
+  {
+    CalculateChannelVolume(3000, tl, tr, nChannelVol[27], nChannelPan[27]);
+    mWave_FME07[2].nOutputTable_L[15] = tl;
+    mWave_FME07[2].nOutputTable_R[15] = tr;
+    mWave_FME07[2].nOutputTable_L[0] = 0;
+    mWave_FME07[2].nOutputTable_R[0] = 0;
+    for (i = 14; i > 0; i--)
+    {
+      mWave_FME07[2].nOutputTable_L[i] = mWave_FME07[2].nOutputTable_L[i + 1] * 80 / 100;
+      mWave_FME07[2].nOutputTable_R[i] = mWave_FME07[2].nOutputTable_R[i + 1] * 80 / 100;
+    }
+  }
 
-	/*
-	 *	FDS
-	 */
-	if (chans & 0x10000000)
-	{
-		// This base volume (4000) is just a guess to what sounds right.  Given the number of steps available in an FDS
-		// 	Wave... it seems like it should be much much more... but then it's TOO loud.
-		CalculateChannelVolume(4000, tl, tr, nChannelVol[28], nChannelPan[28]);
-		for (i = 0; i < 0x21; i++)
-		{
-			for (j = 0; j < 0x40; j++)
-			{
-				mWave_FDS.nOutputTable_L[0][i][j] = (tl * i * j * 30) / (0x21 * 0x40 * 30);
-				mWave_FDS.nOutputTable_R[0][i][j] = (tr * i * j * 30) / (0x21 * 0x40 * 30);
+  /*
+  *  FDS
+  */
+  if (chans & 0x10000000)
+  {
+    // This base volume (4000) is just a guess to what sounds right.  Given the number of steps available in an FDS
+    //  Wave... it seems like it should be much much more... but then it's TOO loud.
+    CalculateChannelVolume(4000, tl, tr, nChannelVol[28], nChannelPan[28]);
+    for (i = 0; i < 0x21; i++)
+    {
+      for (j = 0; j < 0x40; j++)
+      {
+        mWave_FDS.nOutputTable_L[0][i][j] = (tl * i * j * 30) / (0x21 * 0x40 * 30);
+        mWave_FDS.nOutputTable_R[0][i][j] = (tr * i * j * 30) / (0x21 * 0x40 * 30);
 
-				mWave_FDS.nOutputTable_L[1][i][j] = (tl * i * j * 20) / (0x21 * 0x40 * 30);
-				mWave_FDS.nOutputTable_R[1][i][j] = (tr * i * j * 20) / (0x21 * 0x40 * 30);
+        mWave_FDS.nOutputTable_L[1][i][j] = (tl * i * j * 20) / (0x21 * 0x40 * 30);
+        mWave_FDS.nOutputTable_R[1][i][j] = (tr * i * j * 20) / (0x21 * 0x40 * 30);
 
-				mWave_FDS.nOutputTable_L[2][i][j] = (tl * i * j * 15) / (0x21 * 0x40 * 30);
-				mWave_FDS.nOutputTable_R[2][i][j] = (tr * i * j * 15) / (0x21 * 0x40 * 30);
+        mWave_FDS.nOutputTable_L[2][i][j] = (tl * i * j * 15) / (0x21 * 0x40 * 30);
+        mWave_FDS.nOutputTable_R[2][i][j] = (tr * i * j * 15) / (0x21 * 0x40 * 30);
 
-				mWave_FDS.nOutputTable_L[3][i][j] = (tl * i * j * 12) / (0x21 * 0x40 * 30);
-				mWave_FDS.nOutputTable_R[3][i][j] = (tr * i * j * 12) / (0x21 * 0x40 * 30);
-			}
-		}
-	}
+        mWave_FDS.nOutputTable_L[3][i][j] = (tl * i * j * 12) / (0x21 * 0x40 * 30);
+        mWave_FDS.nOutputTable_R[3][i][j] = (tr * i * j * 12) / (0x21 * 0x40 * 30);
+      }
+    }
+  }
 }
 
 /*
- *	GetPlayCalls
+ *  GetPlayCalls
  */
 
 float CNSFCore::GetPlayCalls()
 {
-	if (!fTicksPerPlay)	return 0;
+  if (!fTicksPerPlay)  return 0;
 
-	return ((float)nTotalPlays) + (1.0f - (fTicksUntilNextPlay / fTicksPerPlay));
+  return ((float)nTotalPlays) + (1.0f - (fTicksUntilNextPlay / fTicksPerPlay));
 }
 
 /*
- *	GetWrittenTime
+ *  GetWrittenTime
  */
 UINT CNSFCore::GetWrittenTime(float basedplayspersec /* = 0 */)
 {
-	if (basedplayspersec <= 0)
-		basedplayspersec = GetPlaybackSpeed();
+  if (basedplayspersec <= 0)
+    basedplayspersec = GetPlaybackSpeed();
 
-	if (basedplayspersec <= 0)
-		return 0;
+  if (basedplayspersec <= 0)
+    return 0;
 
-	return (UINT)((GetPlayCalls() * 1000) / basedplayspersec);
+  return (UINT)((GetPlayCalls() * 1000) / basedplayspersec);
 }
 
 /*
- *	SetPlayCalls
+ *  SetPlayCalls
  */
 
 void CNSFCore::SetPlayCalls(float plays)
 {
-	WaitForSamples();
-	if (!bTrackSelected)		return;
+  WaitForSamples();
+  if (!bTrackSelected)  return;
 
-	float old = GetPlayCalls();
-	if (old == plays)		return;		// Long shot... but don't seek to the exact same time we're at
+  float old = GetPlayCalls();
+  if (old == plays)  return; // Long shot... but don't seek to the exact same time we're at
 
-	if (old > plays)
-	{
-		// Can't seek backwards, so restart the song and seek forwards
-		// BYTE temp = bFade;
-		SetTrack(nCurTrack);
-		// bFade = temp;
-		old = 0;
-	}
+  if (old > plays)
+  {
+    // Can't seek backwards, so restart the song and seek forwards
+    // BYTE temp = bFade;
+    SetTrack(nCurTrack);
+    // bFade = temp;
+    old = 0;
+  }
 
-	int runto = (int)((plays - old) * fTicksPerPlay);
-	int tick;
-	pOutput = NULL;
-	pVRC7Buffer = NULL;
+  int runto = (int)((plays - old) * fTicksPerPlay);
+  int tick;
+  pOutput = NULL;
+  pVRC7Buffer = NULL;
 
-	while (runto)
-	{
-		nCPUCycle = nAPUCycle = 0;
-		tick = (int)ceil(fTicksUntilNextPlay);
-		if (tick > runto)
-			tick = runto;
+  while (runto)
+  {
+    nCPUCycle = nAPUCycle = 0;
+    tick = (int)ceil(fTicksUntilNextPlay);
+    if (tick > runto)
+      tick = runto;
 
-		if (!bCPUJammed)
-			tick = Emulate6502(tick);
+    if (!bCPUJammed)
+      tick = Emulate6502(tick);
 
-		runto -= tick;
-		fTicksUntilNextPlay -= tick;
-		if (fTicksUntilNextPlay <= 0)
-		{
-			fTicksUntilNextPlay += fTicksPerPlay;
-			if (bCPUJammed == 2)
-			{
-				nTotalPlays++;
-				bCPUJammed = 0;
-			}
-		}
-	}
+    runto -= tick;
+    fTicksUntilNextPlay -= tick;
+    if (fTicksUntilNextPlay <= 0)
+    {
+      fTicksUntilNextPlay += fTicksPerPlay;
+      if (bCPUJammed == 2)
+      {
+        nTotalPlays++;
+        bCPUJammed = 0;
+      }
+    }
+  }
 
-	EmulateAPU(0);
-	nCPUCycle = nAPUCycle = 0;
+  EmulateAPU(0);
+  nCPUCycle = nAPUCycle = 0;
 }
 
 /*
- *	SetWrittenTime
+ *  SetWrittenTime
  */
 
 void CNSFCore::SetWrittenTime(UINT ms, float basedplays /* = 0 */)
 {
-	WaitForSamples();
-	if (!bTrackSelected)		return;
+  WaitForSamples();
+  if (!bTrackSelected)  return;
 
-	if (basedplays <= 0)
-		basedplays = GetPlaybackSpeed();
-	if (basedplays <= 0)
-		return;
+  if (basedplays <= 0)
+    basedplays = GetPlaybackSpeed();
+  if (basedplays <= 0)
+    return;
 
-	SetPlayCalls(ms * basedplays / 1000);
+  SetPlayCalls(ms * basedplays / 1000);
 }
 
 int CNSFCore::GetSamples(BYTE* buffer, int buffersize)
 {
-	if (!buffer || buffersize < 16 || !bTrackSelected || bIsGeneratingSamples)
-		return 0;
-	bIsGeneratingSamples = 1;
-	pOutput = pVRC7Buffer = buffer;
-	UINT tick, runtocycle = (UINT)((buffersize / ((nMonoStereo == 2) ? 4 : 2)) * fTicksPerSample);
-	nCPUCycle = nAPUCycle = 0;
+  if (!buffer || buffersize < 16 || !bTrackSelected || bIsGeneratingSamples)
+    return 0;
+  bIsGeneratingSamples = 1;
+  pOutput = pVRC7Buffer = buffer;
+  UINT tick, runtocycle = (UINT)((buffersize / ((nMonoStereo == 2) ? 4 : 2)) * fTicksPerSample);
+  nCPUCycle = nAPUCycle = 0;
 
-	for (;;)
-	{
-		tick = (UINT)ceil(fTicksUntilNextPlay);
-		if ((tick + nCPUCycle) > runtocycle)
-			tick = runtocycle - nCPUCycle;
+  for (;;)
+  {
+    tick = (UINT)ceil(fTicksUntilNextPlay);
+    if ((tick + nCPUCycle) > runtocycle)
+      tick = runtocycle - nCPUCycle;
 
-		if (bCPUJammed)
-		{
-			nCPUCycle += tick;
-			EmulateAPU(0);
-		}
-		else
-		{
-			tick = Emulate6502(tick + nCPUCycle);
-			EmulateAPU(1);
-		}
+    if (bCPUJammed)
+    {
+      nCPUCycle += tick;
+      EmulateAPU(0);
+    }
+    else
+    {
+      tick = Emulate6502(tick + nCPUCycle);
+      EmulateAPU(1);
+    }
 
-		fTicksUntilNextPlay -= tick;
-		if (fTicksUntilNextPlay <= 0)
-		{
-			fTicksUntilNextPlay += fTicksPerPlay;
-			if ((bCPUJammed == 2) || bNoWaitForReturn)
-			{
-				regX = regY = regA = (bCleanAXY ? 0 : 0xCD);
-				regPC = 0x5004;
-				nTotalPlays++;
-				bDMCPop_SamePlay = bCPUJammed = 0;
-				if (nForce4017Write == 1)
-					WriteMemory_pAPU(0x4017, 0x00);
-				else if (nForce4017Write == 2)
-					WriteMemory_pAPU(0x4017, 0x80);
-			}
-		}
+    fTicksUntilNextPlay -= tick;
+    if (fTicksUntilNextPlay <= 0)
+    {
+      fTicksUntilNextPlay += fTicksPerPlay;
+      if ((bCPUJammed == 2) || bNoWaitForReturn)
+      {
+        regX = regY = regA = (bCleanAXY ? 0 : 0xCD);
+        regPC = 0x5004;
+        nTotalPlays++;
+        bDMCPop_SamePlay = bCPUJammed = 0;
+        if (nForce4017Write == 1)
+          WriteMemory_pAPU(0x4017, 0x00);
+        else if (nForce4017Write == 2)
+          WriteMemory_pAPU(0x4017, 0x80);
+      }
+    }
 
-		if (nCPUCycle >= runtocycle)
-			break;
-	}
+    if (nCPUCycle >= runtocycle)
+      break;
+  }
 
-	if ((nExternalSound & EXTSOUND_VRC7) && !bPALMode)
-		VRC7_Mix();
+  if ((nExternalSound & EXTSOUND_VRC7) && !bPALMode)
+    VRC7_Mix();
 
-	pVRC7Buffer = NULL;
-	nCPUCycle = nAPUCycle = 0;
-	bIsGeneratingSamples = 0;
+  pVRC7Buffer = NULL;
+  nCPUCycle = nAPUCycle = 0;
+  bIsGeneratingSamples = 0;
 
-	return (int)(pOutput - buffer);
+  return (int)(pOutput - buffer);
 }

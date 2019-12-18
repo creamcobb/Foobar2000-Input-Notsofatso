@@ -18,83 +18,81 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
- // #define __fastcall __attribute__((__fastcall__))
- // #define _fastcall __attribute__((__fastcall__))
 #include <math.h>
 #include <Windows.h>
 
 union TWIN
 {
-	WORD		W;
-	struct { BYTE l; BYTE h; } B;
+  WORD W;
+  struct { BYTE l; BYTE h; } B;
 };
 
 union QUAD
 {
-	UINT		D;
-	struct { BYTE l; BYTE h; WORD w; } B;
+  UINT D;
+  struct { BYTE l; BYTE h; WORD w; } B;
 };
 
 struct NSF_COMMONOPTIONS
 {
-	int nSampleRate; // Samples per sec (96000 is the only way to live)
-	int nChannels; // 1 or 2
+  int nSampleRate; // Samples per sec (96000 is the only way to live)
+  int nChannels; // 1 or 2
 
-	UINT nDefaultSongLength;
-	float fBasedPlaysPerSec;
-	float fMasterVolume;
-	BYTE bUseDefaultSpeed;
-	float fSpeedThrottle;
-	BYTE bLoopForever;
-	BYTE bIgnoreNSFVersion;
+  UINT nDefaultSongLength;
+  float fBasedPlaysPerSec;
+  float fMasterVolume;
+  BYTE bUseDefaultSpeed;
+  float fSpeedThrottle;
+  BYTE bLoopForever;
+  BYTE bIgnoreNSFVersion;
 
-	int nMix[29];
-	int nInv[29];
-	int nVol[29];
-	int nPan[29];
+  int nMix[29];
+  int nInv[29];
+  int nVol[29];
+  int nPan[29];
 };
 
 struct NSF_ADVANCEDOPTIONS
 {
-	int			nInvertCutoffHz;
-	BYTE		bDMCPopReducer;
-	BYTE		nForce4017Write;
-	BYTE		bN106PopReducer;
-	BYTE		bFDSPopReducer;
+  int nInvertCutoffHz;
+  BYTE bDMCPopReducer;
+  BYTE nForce4017Write;
+  BYTE bN106PopReducer;
+  BYTE bFDSPopReducer;
 
-	BYTE		bIgnore4011Writes;
-	BYTE		bIgnoreBRK;
-	BYTE		bIgnoreIllegalOps;
-	BYTE		bNoWaitForReturn;
+  BYTE bIgnore4011Writes;
+  BYTE bIgnoreBRK;
+  BYTE bIgnoreIllegalOps;
+  BYTE bNoWaitForReturn;
 
-	BYTE		bPALPreference;
-	BYTE		bCleanAXY;
-	BYTE		bResetDuty;
+  BYTE bPALPreference;
+  BYTE bCleanAXY;
+  BYTE bResetDuty;
 
-	BYTE		bHighPassEnabled;
-	BYTE		bLowPassEnabled;
-	BYTE		bPrePassEnabled;
-	int			nHighPassBase;
-	int			nLowPassBase;
-	int			nPrePassBase;
+  BYTE bHighPassEnabled;
+  BYTE bLowPassEnabled;
+  BYTE bPrePassEnabled;
+  int nHighPassBase;
+  int nLowPassBase;
+  int nPrePassBase;
 };
 
-#define NTSC_FREQUENCY			 1789772.727273f
-#define PAL_FREQUENCY			 1652097.692308f
-#define NTSC_NMIRATE			      60.098814f
-#define PAL_NMIRATE				      50.006982f
+#define NTSC_FREQUENCY 1789772.727273f
+#define PAL_FREQUENCY 1652097.692308f
+#define NTSC_NMIRATE 60.098814f
+#define PAL_NMIRATE 50.006982f
 
-#define NES_FREQUENCY				21477270
-#define NTSC_FRAME_COUNTER_FREQ		(NTSC_FREQUENCY / (NES_FREQUENCY / 89490.0f))
-#define PAL_FRAME_COUNTER_FREQ		(PAL_FREQUENCY / (NES_FREQUENCY / 89490.0f))
+#define NES_FREQUENCY 21477270
+#define NTSC_FRAME_COUNTER_FREQ (NTSC_FREQUENCY / (NES_FREQUENCY / 89490.0f))
+#define PAL_FRAME_COUNTER_FREQ (PAL_FREQUENCY / (NES_FREQUENCY / 89490.0f))
 
 
-#define EXTSOUND_VRC6			0x01
-#define EXTSOUND_VRC7			0x02
-#define EXTSOUND_FDS			0x04
-#define EXTSOUND_MMC5			0x08
-#define EXTSOUND_N106			0x10
-#define EXTSOUND_FME07			0x20
+#define EXTSOUND_VRC6 0x01
+#define EXTSOUND_VRC7 0x02
+#define EXTSOUND_FDS 0x04
+#define EXTSOUND_MMC5 0x08
+#define EXTSOUND_N106 0x10
+#define EXTSOUND_FME07 0x20
 
 #include "CNSFFile.h"
 #include "CSquareWaves.h"
@@ -110,279 +108,279 @@ class CNSFCore;
 class CNSFFile;
 
 typedef BYTE(CNSFCore::*ReadProc)(WORD);
-typedef void (CNSFCore::*WriteProc)(WORD, BYTE);
+typedef void(CNSFCore::*WriteProc)(WORD, BYTE);
 
 class CNSFCore
 {
 public:
-	// 
-	// 	Construction / Destruction
-	// 
-	CNSFCore();
-	~CNSFCore() { Destroy(); }
-	int		Initialize();				// 1 = initialized ok, 0 = couldn't initialize (memory allocation error)
-	void	Destroy();					// Cleans up memory
+  // 
+  //  Construction / Destruction
+  // 
+  CNSFCore();
+  ~CNSFCore() { Destroy(); }
+  int Initialize(); // 1 = initialized ok, 0 = couldn't initialize (memory allocation error)
+  void Destroy(); // Cleans up memory
 
-	// 
-	// 	Song Loading
-	// 
-	int		LoadNSF(const CNSFFile* file);	// Grab data from an existing file  1 = loaded ok, 0 = error loading
+  // 
+  //  Song Loading
+  // 
+  int LoadNSF(const CNSFFile* file); // Grab data from an existing file  1 = loaded ok, 0 = error loading
 
-	// 
-	// 	Track Control
-	// 
-	void	SetTrack(BYTE track);			// Change tracks
+  // 
+  //  Track Control
+  // 
+  void SetTrack(BYTE track); // Change tracks
 
-	// 
-	// 	Getting Samples
-	// 
-	int		GetSamples(BYTE* buffer, int buffersize);	// Fill a buffer with samples
+  // 
+  //  Getting Samples
+  // 
+  int GetSamples(BYTE* buffer, int buffersize); // Fill a buffer with samples
 
-	// 
-	// 	Playback options
-	// 
-	int		SetPlaybackOptions(int samplerate, int channels);				// Set desired playback options (0 = bad options couldn't be set)
-	void	SetPlaybackSpeed(float playspersec);							// Speed throttling (0 = uses NSF specified speed)
-	void	SetMasterVolume(float vol);										// 1 = full volume, 2 = double volume, .5 = half volume, etc
-	void	SetChannelOptions(UINT chan, int mix, int vol, int pan, int inv);	// Chan is the zero based index of the channel to change.
-	void	SetAdvancedOptions(const NSF_ADVANCEDOPTIONS* opt);				// Misc options
+  // 
+  //  Playback options
+  // 
+  int SetPlaybackOptions(int samplerate, int channels); // Set desired playback options (0 = bad options couldn't be set)
+  void SetPlaybackSpeed(float playspersec); // Speed throttling (0 = uses NSF specified speed)
+  void SetMasterVolume(float vol); // 1 = full volume, 2 = double volume, .5 = half volume, etc
+  void SetChannelOptions(UINT chan, int mix, int vol, int pan, int inv); // Chan is the zero based index of the channel to change.
+  void SetAdvancedOptions(const NSF_ADVANCEDOPTIONS* opt); // Misc options
 
-	float	GetPlaybackSpeed();
-	float	GetMasterVolume();
-	void	GetAdvancedOptions(NSF_ADVANCEDOPTIONS* opt);
+  float GetPlaybackSpeed();
+  float GetMasterVolume();
+  void GetAdvancedOptions(NSF_ADVANCEDOPTIONS* opt);
 
-	// 
-	// 	Seeking
-	// 
-	float	GetPlayCalls();								// Gets the number of 'play' routine calls executed
-	UINT	GetWrittenTime(float basedplayspersec = 0);	// Gets the output time (based on the given play rate, if basedplayspersec is zero, current playback speed is used
-	void	SetPlayCalls(float plays);					// Sets the number os 'plays' routines executed (for precise seeking)
-	void	SetWrittenTime(UINT ms, float basedplays = 0);	// sets the written time (approx. seeking)
-
-protected:
-	// 
-	// 	Internal Functions
-	// 
-	void	RebuildOutputTables(UINT chans);			// Rebuilds the output tables (when output options are changed.. like volume, pan, etc)
-	void	CalculateChannelVolume(int maxvol, int& left, int& right, BYTE vol, char pan);	// Used in above function
-	void	RecalcFilter();
-	void	RecalculateInvertFreqs(int cutoff);
-	void	WaitForSamples();
+  // 
+  //  Seeking
+  // 
+  float GetPlayCalls(); // Gets the number of 'play' routine calls executed
+  UINT GetWrittenTime(float basedplayspersec = 0); // Gets the output time (based on the given play rate, if basedplayspersec is zero, current playback speed is used
+  void SetPlayCalls(float plays); // Sets the number os 'plays' routines executed (for precise seeking)
+  void SetWrittenTime(UINT ms, float basedplays = 0); // sets the written time (approx. seeking)
 
 protected:
-	/*
-	 *	Memory Read/Write routines
-	 */
-	BYTE 	ReadMemory_RAM(WORD a) { return pRAM[a & 0x07FF]; }
-	BYTE 	ReadMemory_ExRAM(WORD a) { return pExRAM[a & 0x0FFF]; }
-	BYTE 	ReadMemory_SRAM(WORD a) { return pSRAM[a & 0x1FFF]; }
-	BYTE 	ReadMemory_pAPU(WORD a);
-	BYTE 	ReadMemory_ROM(WORD a) { return pROM[(a >> 12) - 6][a & 0x0FFF]; }
-	BYTE 	ReadMemory_Default(WORD a) { return (a >> 8); }
+  // 
+  //  Internal Functions
+  // 
+  void RebuildOutputTables(UINT chans); // Rebuilds the output tables (when output options are changed.. like volume, pan, etc)
+  void CalculateChannelVolume(int maxvol, int& left, int& right, BYTE vol, char pan); // Used in above function
+  void RecalcFilter();
+  void RecalculateInvertFreqs(int cutoff);
+  void WaitForSamples();
 
-	BYTE 	ReadMemory_N106(WORD a);
+protected:
+  /*
+  *  Memory Read/Write routines
+  */
+  BYTE ReadMemory_RAM(WORD a) { return pRAM[a & 0x07FF]; }
+  BYTE ReadMemory_ExRAM(WORD a) { return pExRAM[a & 0x0FFF]; }
+  BYTE ReadMemory_SRAM(WORD a) { return pSRAM[a & 0x1FFF]; }
+  BYTE ReadMemory_pAPU(WORD a);
+  BYTE ReadMemory_ROM(WORD a) { return pROM[(a >> 12) - 6][a & 0x0FFF]; }
+  BYTE ReadMemory_Default(WORD a) { return (a >> 8); }
+
+  BYTE ReadMemory_N106(WORD a);
 
 
-	void 	WriteMemory_RAM(WORD a, BYTE v) { pRAM[a & 0x07FF] = v; }
-	void 	WriteMemory_ExRAM(WORD a, BYTE v);
-	void 	WriteMemory_SRAM(WORD a, BYTE v) { pSRAM[a & 0x1FFF] = v; }
-	void 	WriteMemory_pAPU(WORD a, BYTE v);
-	void 	WriteMemory_FDSRAM(WORD a, BYTE v) { pROM[(a >> 12) - 6][a & 0x0FFF] = v; }
-	void 	WriteMemory_Default(WORD a, BYTE v) { }
+  void WriteMemory_RAM(WORD a, BYTE v) { pRAM[a & 0x07FF] = v; }
+  void WriteMemory_ExRAM(WORD a, BYTE v);
+  void WriteMemory_SRAM(WORD a, BYTE v) { pSRAM[a & 0x1FFF] = v; }
+  void WriteMemory_pAPU(WORD a, BYTE v);
+  void WriteMemory_FDSRAM(WORD a, BYTE v) { pROM[(a >> 12) - 6][a & 0x0FFF] = v; }
+  void WriteMemory_Default(WORD a, BYTE v) { }
 
-	void 	WriteMemory_VRC6(WORD a, BYTE v);
-	void 	WriteMemory_MMC5(WORD a, BYTE v);
-	void 	WriteMemory_N106(WORD a, BYTE v);
-	void 	WriteMemory_VRC7(WORD a, BYTE v);
-	void 	WriteMemory_FME07(WORD a, BYTE v);
+  void WriteMemory_VRC6(WORD a, BYTE v);
+  void WriteMemory_MMC5(WORD a, BYTE v);
+  void WriteMemory_N106(WORD a, BYTE v);
+  void WriteMemory_VRC7(WORD a, BYTE v);
+  void WriteMemory_FME07(WORD a, BYTE v);
 
-	/*
-	 *	Emulation
-	 */
-	void	EmulateAPU(BYTE bBurnCPUCycles);
-	UINT	Emulate6502(UINT runto);
+  /*
+  *  Emulation
+  */
+  void EmulateAPU(BYTE bBurnCPUCycles);
+  UINT Emulate6502(UINT runto);
 
 protected:
 
-	// 
-	// 	Initialization flags
-	// 
-	BYTE			bMemoryOK;					// Did memory get allocated ok?
-	BYTE			bFileLoaded;				// Is a file loaded?
-	BYTE			bTrackSelected;				// Did they select a track?
-	volatile BYTE	bIsGeneratingSamples;		// Currently generating samples... if set it prevents vital stats from changing (thread safe)
+  // 
+  //  Initialization flags
+  // 
+  BYTE bMemoryOK; // Did memory get allocated ok?
+  BYTE bFileLoaded; // Is a file loaded?
+  BYTE bTrackSelected; // Did they select a track?
+  volatile BYTE bIsGeneratingSamples; // Currently generating samples... if set it prevents vital stats from changing (thread safe)
 
-	/*
-	 *	Memory
-	 */
-	BYTE*		pRAM;			// RAM:		0x0000 - 0x07FF
-	BYTE*		pSRAM;			// SRAM:		0x6000 - 0x7FFF (non-FDS only)
-	BYTE*		pExRAM;			// ExRAM:	0x5C00 - 0x5FF5 (MMC5 only)
-								// Also holds NSF player info (at 0x5000 - 0x500F)
-	BYTE*		pROM_Full;		// Full ROM buffer
+  /*
+  *  Memory
+  */
+  BYTE* pRAM; // RAM:  0x0000 - 0x07FF
+  BYTE* pSRAM; // SRAM:  0x6000 - 0x7FFF (non-FDS only)
+  BYTE* pExRAM; // ExRAM:  0x5C00 - 0x5FF5 (MMC5 only)
+  // Also holds NSF player info (at 0x5000 - 0x500F)
+  BYTE* pROM_Full; // Full ROM buffer
 
-	BYTE*		pROM[10];		// ROM banks (point to areas in pROM_Full)
-								// 0x8000 - 0xFFFF
-								// Also includes 0x6000 - 0x7FFF (FDS only)
-	BYTE*		pStack;			// The stack (points to areas in pRAM)
-								// 0x0100 - 0x01FF
+  BYTE* pROM[10]; // ROM banks (point to areas in pROM_Full)
+  // 0x8000 - 0xFFFF
+  // Also includes 0x6000 - 0x7FFF (FDS only)
+  BYTE* pStack; // The stack (points to areas in pRAM)
+  // 0x0100 - 0x01FF
 
-	int			nROMSize;		// Size of this ROM file in bytes
-	int			nROMBankCount;	// Max number of 4k banks
-	int			nROMMaxSize;	// Size of allocated pROM_Full buffer
+  int nROMSize; // Size of this ROM file in bytes
+  int nROMBankCount; // Max number of 4k banks
+  int nROMMaxSize; // Size of allocated pROM_Full buffer
 
-	/*
-	 *	Memory Proc Pointers
-	 */
+  /*
+  *  Memory Proc Pointers
+  */
 
-	ReadProc	ReadMemory[0x10];
-	WriteProc	WriteMemory[0x10];
+  ReadProc ReadMemory[0x10];
+  WriteProc WriteMemory[0x10];
 
-	/*
-	 *	6502 Registers / Mode
-	 */
+  /*
+  *  6502 Registers / Mode
+  */
 
-	BYTE		regA;			// Accumulator
-	BYTE		regX;			// X-Index
-	BYTE		regY;			// Y-Index
-	BYTE		regP;			// Processor Status
-	BYTE		regSP;			// Stack Pointer
-	WORD		regPC;			// Program Counter
+  BYTE regA; // Accumulator
+  BYTE regX; // X-Index
+  BYTE regY; // Y-Index
+  BYTE regP; // Processor Status
+  BYTE regSP; // Stack Pointer
+  WORD regPC; // Program Counter
 
-	BYTE		bPALMode;		// 1 if in PAL emulation mode, 0 if in NTSC
-	BYTE		bCPUJammed;		// 0 = not jammed.  1 = really jammed.  2 = 'fake' jammed
-								// Fake jam caused by the NSF code to signal the end of the play/init routine
-
-
-	BYTE		nMultIn_Low;	// Multiplication Register, for MMC5 chip only (5205+5206)
-	BYTE		nMultIn_High;
+  BYTE bPALMode; // 1 if in PAL emulation mode, 0 if in NTSC
+  BYTE bCPUJammed; // 0 = not jammed.  1 = really jammed.  2 = 'fake' jammed
+  // Fake jam caused by the NSF code to signal the end of the play/init routine
 
 
-	/*
-	 *	NSF Preparation Information
-	 */
+  BYTE nMultIn_Low; // Multiplication Register, for MMC5 chip only (5205+5206)
+  BYTE nMultIn_High;
 
-	BYTE		nBankswitchInitValues[10];	// Banks to swap to on tune init
-	WORD		nPlayAddress;				// Play routine address
-	WORD		nInitAddress;				// Init routine address
 
-	BYTE		nExternalSound;				// External sound chips
-	BYTE		nCurTrack;
+  /*
+  *  NSF Preparation Information
+  */
 
-	float		fNSFPlaybackSpeed;
+  BYTE nBankswitchInitValues[10]; // Banks to swap to on tune init
+  WORD nPlayAddress; // Play routine address
+  WORD nInitAddress; // Init routine address
 
-	/*
-	 *	pAPU
-	 */
+  BYTE nExternalSound; // External sound chips
+  BYTE nCurTrack;
 
-	BYTE		nFrameCounter;		// Frame Sequence Counter
-	BYTE		nFrameCounterMax;	// Frame Sequence Counter Size (3 or 4 depending on $4017.7)
-	BYTE		bFrameIRQEnabled;	// TRUE if frame IRQs are enabled
-	BYTE		bFrameIRQPending;	// TRUE if the frame sequencer is holding down an IRQ
+  float fNSFPlaybackSpeed;
 
-	BYTE		bChannelMix[24];	// Mixing flags for each channel (except the main 5!)
-	BYTE		nChannelVol[29];	// Volume settings for each channel
-	char		nChannelPan[29];	// Panning for each channel
+  /*
+  *  pAPU
+  */
 
-	CSquareWaves	mWave_Squares;			// Square channels 1 and 2
-	CTNDWaves		mWave_TND;				// Triangle/Noise/DMC channels
-	CVRC6PulseWave	mWave_VRC6Pulse[2];
-	CVRC6SawWave	mWave_VRC6Saw;
-	CMMC5SquareWave	mWave_MMC5Square[2];
-	CMMC5VoiceWave	mWave_MMC5Voice;
-	CN106Wave		mWave_N106;
-	CFDSWave		mWave_FDS;
+  BYTE nFrameCounter; // Frame Sequence Counter
+  BYTE nFrameCounterMax; // Frame Sequence Counter Size (3 or 4 depending on $4017.7)
+  BYTE bFrameIRQEnabled; // TRUE if frame IRQs are enabled
+  BYTE bFrameIRQPending; // TRUE if the frame sequencer is holding down an IRQ
 
-	BYTE			nFME07_Address;
-	CFME07Wave		mWave_FME07[3];			// FME-07's 3 pulse channels
+  BYTE bChannelMix[24]; // Mixing flags for each channel (except the main 5!)
+  BYTE nChannelVol[29]; // Volume settings for each channel
+  char nChannelPan[29]; // Panning for each channel
 
-	/*
-	 *	VRC7 stuffs
-	 */
+  CSquareWaves mWave_Squares; // Square channels 1 and 2
+  CTNDWaves mWave_TND; // Triangle/Noise/DMC channels
+  CVRC6PulseWave mWave_VRC6Pulse[2];
+  CVRC6SawWave mWave_VRC6Saw;
+  CMMC5SquareWave mWave_MMC5Square[2];
+  CMMC5VoiceWave mWave_MMC5Voice;
+  CN106Wave mWave_N106;
+  CFDSWave mWave_FDS;
 
-	BYTE		nVRC7Address;			// Address written to the VRC7 port
-	BYTE*		pVRC7Buffer;			// Pointer to the position to write VRC7 samples
-	void*		pFMOPL;
-	BYTE		VRC7Chan[3][6];
-	BYTE		bVRC7Inv[6];
+  BYTE nFME07_Address;
+  CFME07Wave mWave_FME07[3]; // FME-07's 3 pulse channels
 
-	void		VRC7_Init();
-	void		VRC7_Reset();
-	void		VRC7_Mix();
-	void		VRC7_Write(BYTE val);
-	void		VRC7_Destroy();
-	void		VRC7_LoadInstrument(BYTE Chan);
-	void		VRC7_RecalcMultiplier(BYTE chan);
-	void		VRC7_ChangeInversion(BYTE chan, BYTE inv);
-	void		VRC7_ChangeInversionFreq();
+  /*
+  *  VRC7 stuffs
+  */
 
-	/*
-	 *	Timing and Counters
-	 */
-	float		fTicksUntilNextFrame;	// Clock cycles until the next frame
+  BYTE nVRC7Address; // Address written to the VRC7 port
+  BYTE* pVRC7Buffer; // Pointer to the position to write VRC7 samples
+  void* pFMOPL;
+  BYTE VRC7Chan[3][6];
+  BYTE bVRC7Inv[6];
 
-	float		fTicksPerPlay;			// Clock cycles between play calls
-	float		fTicksUntilNextPlay;	// Clock cycles until the next play call
+  void VRC7_Init();
+  void VRC7_Reset();
+  void VRC7_Mix();
+  void VRC7_Write(BYTE val);
+  void VRC7_Destroy();
+  void VRC7_LoadInstrument(BYTE Chan);
+  void VRC7_RecalcMultiplier(BYTE chan);
+  void VRC7_ChangeInversion(BYTE chan, BYTE inv);
+  void VRC7_ChangeInversionFreq();
 
-	float		fTicksPerSample;		// Clock cycles between generated samples
-	float		fTicksUntilNextSample;	// Clocks until the next sample
+  /*
+  *  Timing and Counters
+  */
+  float fTicksUntilNextFrame; // Clock cycles until the next frame
 
-	UINT		nCPUCycle;
-	UINT		nAPUCycle;
-	UINT		nTotalPlays;			// Number of times the play subroutine has been called (for tracking output time)
+  float fTicksPerPlay; // Clock cycles between play calls
+  float fTicksUntilNextPlay; // Clock cycles until the next play call
 
-	// 
-	// 	Sound output options
-	// 
-	int				nSampleRate;
-	int				nMonoStereo;
+  float fTicksPerSample; // Clock cycles between generated samples
+  float fTicksUntilNextSample; // Clocks until the next sample
 
-	// 
-	// 	Volume / filter tracking
-	// 
+  UINT nCPUCycle;
+  UINT nAPUCycle;
+  UINT nTotalPlays; // Number of times the play subroutine has been called (for tracking output time)
 
-	float			fMasterVolume;
+  // 
+  //  Sound output options
+  // 
+  int nSampleRate;
+  int nMonoStereo;
 
-	/*
-	 *	Designated Output Buffer
-	 */
-	BYTE*		pOutput;
-	int			nDownsample;
+  // 
+  //  Volume / filter tracking
+  // 
 
-	/*
-	 *	Misc Options
-	 */
-	BYTE		bDMCPopReducer;					// 1 = enabled, 0 = disabled
-	BYTE		nDMCPop_Prev;
-	BYTE		bDMCPop_Skip;
-	BYTE		bDMCPop_SamePlay;
+  float fMasterVolume;
 
-	BYTE		nForce4017Write;
-	BYTE		bN106PopReducer;
-	int			nInvertCutoffHz;
-	BYTE		bIgnore4011Writes;
+  /*
+  *  Designated Output Buffer
+  */
+  BYTE* pOutput;
+  int nDownsample;
 
-	BYTE		bIgnoreBRK;
-	BYTE		bIgnoreIllegalOps;
-	BYTE		bNoWaitForReturn;
-	BYTE		bPALPreference;
-	BYTE		bCleanAXY;
-	BYTE		bResetDuty;
+  /*
+  *  Misc Options
+  */
+  BYTE bDMCPopReducer; // 1 = enabled, 0 = disabled
+  BYTE nDMCPop_Prev;
+  BYTE bDMCPop_Skip;
+  BYTE bDMCPop_SamePlay;
 
-	/*
-	 *	Sound Filter
-	 */
+  BYTE nForce4017Write;
+  BYTE bN106PopReducer;
+  int nInvertCutoffHz;
+  BYTE bIgnore4011Writes;
 
-	__int64		nFilterAccL, nFilterAccR;
-	__int64		nFilterAcc2L, nFilterAcc2R;
-	__int64		nLowPass, nHighPass;
+  BYTE bIgnoreBRK;
+  BYTE bIgnoreIllegalOps;
+  BYTE bNoWaitForReturn;
+  BYTE bPALPreference;
+  BYTE bCleanAXY;
+  BYTE bResetDuty;
 
-	int			nLowPassBase, nHighPassBase;
+  /*
+  *  Sound Filter
+  */
 
-	BYTE		bLowPassEnabled, bHighPassEnabled, bPrePassEnabled;
+  __int64 nFilterAccL, nFilterAccR;
+  __int64 nFilterAcc2L, nFilterAcc2R;
+  __int64 nLowPass, nHighPass;
 
-	int			nSmPrevL, nSmPrevR;
-	int			nSmAccL, nSmAccR;
-	int			nPrePassBase;
-	float		fSmDiv;
+  int nLowPassBase, nHighPassBase;
+
+  BYTE bLowPassEnabled, bHighPassEnabled, bPrePassEnabled;
+
+  int nSmPrevL, nSmPrevR;
+  int nSmAccL, nSmAccR;
+  int nPrePassBase;
+  float fSmDiv;
 };

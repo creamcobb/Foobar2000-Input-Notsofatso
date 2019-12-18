@@ -21,44 +21,44 @@
 class CFME07Wave
 {
 public:
-	// // // // // // // // // // // // // // /
-	// Frequency Control
-	TWIN		nFreqTimer;
-	int			nFreqCount;
+  // // // // // // // // // // // // // // /
+  // Frequency Control
+  TWIN nFreqTimer;
+  int nFreqCount;
 
-	// // // // // // // // // // // // // // /
-	// Channel Disabling
-	BYTE		bChannelEnabled;
+  // // // // // // // // // // // // // // /
+  // Channel Disabling
+  BYTE bChannelEnabled;
 
-	// // // // // // // // // // // // // // /
-	// Volume
-	BYTE		nVolume;
+  // // // // // // // // // // // // // // /
+  // Volume
+  BYTE nVolume;
 
-	// // // // // // // // // // // // // // /
-	// Duty Cycle
-	BYTE		nDutyCount;
+  // // // // // // // // // // // // // // /
+  // Duty Cycle
+  BYTE nDutyCount;
 
-	// // // // // // // // // // // // // // // // // /
-	// Output and Downsampling
-	short		nOutputTable_L[0x10];
-	short		nOutputTable_R[0x10];
-	int			nMixL;
-	int			nMixR;
+  // // // // // // // // // // // // // // // // // /
+  // Output and Downsampling
+  short nOutputTable_L[0x10];
+  short nOutputTable_R[0x10];
+  int nMixL;
+  int nMixR;
 
-	// // // // // // // // // // // // // // // // // /
-	// Inversion
-	BYTE		bInvert;
-	BYTE		bDoInvert;
-	WORD		nInvertFreqCutoff;
+  // // // // // // // // // // // // // // // // // /
+  // Inversion
+  BYTE bInvert;
+  BYTE bDoInvert;
+  WORD nInvertFreqCutoff;
 
-	
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
 
-	void DoTicks(int ticks, BYTE mix);
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  void DoTicks(int ticks, BYTE mix);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };

@@ -24,72 +24,72 @@
 class CFDSWave
 {
 public:
-	/*	Envelope Unit	*/
-	BYTE		bEnvelopeEnable;
-	BYTE		nEnvelopeSpeed;
+  /* Envelope Unit */
+  BYTE bEnvelopeEnable;
+  BYTE nEnvelopeSpeed;
 
-	/*	Volume Envelope	*/
-	BYTE		nVolEnv_Mode;
-	BYTE		nVolEnv_Decay;
-	BYTE		nVolEnv_Gain;
-	int			nVolEnv_Timer;
-	int			nVolEnv_Count;
-	BYTE		nVolume;
-	BYTE		bVolEnv_On;
+  /* Volume Envelope */
+  BYTE nVolEnv_Mode;
+  BYTE nVolEnv_Decay;
+  BYTE nVolEnv_Gain;
+  int nVolEnv_Timer;
+  int nVolEnv_Count;
+  BYTE nVolume;
+  BYTE bVolEnv_On;
 
-	/*	Sweep Envenlope	*/
-	BYTE		nSweep_Mode;
-	BYTE		nSweep_Decay;
-	int			nSweep_Timer;
-	int			nSweep_Count;
-	BYTE		nSweep_Gain;
-	BYTE		bSweepEnv_On;
+  /* Sweep Envenlope */
+  BYTE nSweep_Mode;
+  BYTE nSweep_Decay;
+  int nSweep_Timer;
+  int nSweep_Count;
+  BYTE nSweep_Gain;
+  BYTE bSweepEnv_On;
 
-	/*	Effector / LFO / Modulation	Unit	*/
-	int			nSweepBias;
-	BYTE		bLFO_Enabled;
-	TWIN		nLFO_Freq;
-	float		fLFO_Timer;
-	float		fLFO_Count;
-	BYTE		nLFO_Addr;
-	BYTE		nLFO_Table[0x40];
-	BYTE		bLFO_On;
+  /* Effector / LFO / Modulation Unit */
+  int nSweepBias;
+  BYTE bLFO_Enabled;
+  TWIN nLFO_Freq;
+  float fLFO_Timer;
+  float fLFO_Count;
+  BYTE nLFO_Addr;
+  BYTE nLFO_Table[0x40];
+  BYTE bLFO_On;
 
-	/*	Main Output		*/
-	BYTE		nMainVolume;
-	BYTE		bEnabled;
-	TWIN		nFreq;
-	float		fFreqCount;
-	BYTE		nMainAddr;
-	BYTE		nWaveTable[0x40];
-	BYTE		bWaveWrite;
-	BYTE		bMain_On;
+  /* Main Output  */
+  BYTE nMainVolume;
+  BYTE bEnabled;
+  TWIN nFreq;
+  float fFreqCount;
+  BYTE nMainAddr;
+  BYTE nWaveTable[0x40];
+  BYTE bWaveWrite;
+  BYTE bMain_On;
 
-	/*	Output and Downsampling	*/
-	short		nOutputTable_L[4][0x21][0x40];
-	short		nOutputTable_R[4][0x21][0x40];
-	int			nMixL;
-	int			nMixR;
+  /* Output and Downsampling */
+  short nOutputTable_L[4][0x21][0x40];
+  short nOutputTable_R[4][0x21][0x40];
+  int nMixL;
+  int nMixR;
 
-	/*	Inversion				*/
-	BYTE		bInvert;
+  /* Inversion */
+  BYTE bInvert;
 
-	/*	Pop Reducer				*/
-	BYTE		bPopReducer;
-	BYTE		nPopOutput;
-	int			nPopCount;
+  /* Pop Reducer */
+  BYTE bPopReducer;
+  BYTE nPopOutput;
+  int nPopCount;
 
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
 
-	void DoTicks(int ticks, BYTE mix);
+  void DoTicks(int ticks, BYTE mix);
 
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
-	// Mixing
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // 
+  // Mixing
 
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };

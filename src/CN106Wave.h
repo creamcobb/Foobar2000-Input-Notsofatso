@@ -24,66 +24,66 @@
 class CN106Wave
 {
 public:
-	// // // // // // // // // // // // // // // 
-	// All Channel Stuff
-	BYTE		nActiveChannels;
-	BYTE		bAutoIncrement;
-	BYTE		nCurrentAddress;
-	BYTE		nRAM[0x100];				// internal memory for registers/wave data
-	float		fFrequencyLookupTable[8];	// lookup table for frequency conversions
+  // // // // // // // // // // // // // // // 
+  // All Channel Stuff
+  BYTE nActiveChannels;
+  BYTE bAutoIncrement;
+  BYTE nCurrentAddress;
+  BYTE nRAM[0x100]; // internal memory for registers/wave data
+  float fFrequencyLookupTable[8]; // lookup table for frequency conversions
 
 
-	// // // // // // // // // // // // // // // 
-	// Individual channel stuff
-	// // // // // // // // // // // // // // // 
-	// Wavelength / Frequency
-	QUAD		nFreqReg[8];
-	float		fFreqTimer[8];
-	float		fFreqCount[8];
+  // // // // // // // // // // // // // // // 
+  // Individual channel stuff
+  // // // // // // // // // // // // // // // 
+  // Wavelength / Frequency
+  QUAD  nFreqReg[8];
+  float fFreqTimer[8];
+  float fFreqCount[8];
 
-	// // // // // // // // // // // // // // // 
-	// Wave data length / remaining
-	BYTE		nWaveSize[8];
-	BYTE		nWaveRemaining[8];
+  // // // // // // // // // // // // // // // 
+  // Wave data length / remaining
+  BYTE nWaveSize[8];
+  BYTE nWaveRemaining[8];
 
-	// // // // // // // // // // // // // // // 
-	// Wave data position
-	BYTE		nWavePosStart[8];
-	BYTE		nWavePos[8];
-	BYTE		nOutput[8];
+  // // // // // // // // // // // // // // // 
+  // Wave data position
+  BYTE nWavePosStart[8];
+  BYTE nWavePos[8];
+  BYTE nOutput[8];
 
-	// // // // // // // // // // // // // // // 
-	// Volume
-	BYTE		nVolume[8];
+  // // // // // // // // // // // // // // // 
+  // Volume
+  BYTE nVolume[8];
 
-	// // // // // // // // // // // // // // // 
-	// Pop Reducer
-	BYTE		nPreVolume[8];
-	BYTE		nPopCheck[8];
+  // // // // // // // // // // // // // // // 
+  // Pop Reducer
+  BYTE nPreVolume[8];
+  BYTE nPopCheck[8];
 
-	// // // // // // // // // // // // // // // 
-	// Mixing
-	short		nOutputTable_L[8][0x10][0x10];
-	short		nOutputTable_R[8][0x10][0x10];
-	int			nMixL[8];
-	int			nMixR[8];
+  // // // // // // // // // // // // // // // 
+  // Mixing
+  short nOutputTable_L[8][0x10][0x10];
+  short nOutputTable_R[8][0x10][0x10];
+  int nMixL[8];
+  int nMixR[8];
 
-	// // // // // // // // // // // // // // // 
-	// Inverting
-	BYTE		bInvert[8];
-	BYTE		bDoInvert[8];
-	UINT		nInvertFreqCutoff[8][8];
-	BYTE		nWaveSizeWritten[8];
-	BYTE		nInvCheck[8];
+  // // // // // // // // // // // // // // // 
+  // Inverting
+  BYTE bInvert[8];
+  BYTE bDoInvert[8];
+  UINT nInvertFreqCutoff[8][8];
+  BYTE nWaveSizeWritten[8];
+  BYTE nInvCheck[8];
 
-	
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
 
-	void DoTicks(int ticks, BYTE* mix);
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  void DoTicks(int ticks, BYTE* mix);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };

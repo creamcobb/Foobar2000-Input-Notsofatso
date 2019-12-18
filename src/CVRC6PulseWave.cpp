@@ -22,56 +22,56 @@
 
 void CVRC6PulseWave::DoTicks(int ticks, BYTE mix)
 {
-	register int mn;
+  register int mn;
 
-	if (!bChannelEnabled)
-		return;
+  if (!bChannelEnabled)
+    return;
 
-	while (ticks)
-	{
-		mn = min(nFreqCount, ticks);
-		ticks -= mn;
+  while (ticks)
+  {
+    mn = min(nFreqCount, ticks);
+    ticks -= mn;
 
-		nFreqCount -= mn;
+    nFreqCount -= mn;
 
-		if (mix && (nDutyCount <= nDutyCycle))
-		{
-			nMixL += nOutputTable_L[nVolume] * mn;
-			nMixR += nOutputTable_R[nVolume] * (bDoInvert ? -mn : mn);
-		}
+    if (mix && (nDutyCount <= nDutyCycle))
+    {
+      nMixL += nOutputTable_L[nVolume] * mn;
+      nMixR += nOutputTable_R[nVolume] * (bDoInvert ? -mn : mn);
+    }
 
-		if (nFreqCount > 0) continue;
-		nFreqCount = nFreqTimer.W + 1;
+    if (nFreqCount > 0) continue;
+    nFreqCount = nFreqTimer.W + 1;
 
-		if (!bDigitized)
-		{
-			nDutyCount = (nDutyCount + 1) & 0x0F;
-			if (nDutyCount == 10)
-			{
-				bDoInvert = bInvert;
-				if (nInvertFreqCutoff < nFreqTimer.W)
-					bDoInvert = 0;
-			}
-		}
-		else
-		{
-			bDoInvert = bInvert;
-			if (nInvertFreqCutoff < nFreqTimer.W)
-				bDoInvert = 0;
-		}
-	}
+    if (!bDigitized)
+    {
+      nDutyCount = (nDutyCount + 1) & 0x0F;
+      if (nDutyCount == 10)
+      {
+        bDoInvert = bInvert;
+        if (nInvertFreqCutoff < nFreqTimer.W)
+          bDoInvert = 0;
+      }
+    }
+    else
+    {
+      bDoInvert = bInvert;
+      if (nInvertFreqCutoff < nFreqTimer.W)
+        bDoInvert = 0;
+    }
+  }
 }
 
 void CVRC6PulseWave::Mix_Mono(int& mix, int downsample)
 {
-	mix += (nMixL / downsample);
-	nMixL = 0;
+  mix += (nMixL / downsample);
+  nMixL = 0;
 }
 
 void CVRC6PulseWave::Mix_Stereo(int& mixL, int& mixR, int downsample)
 {
-	mixL += (nMixL / downsample);
-	mixR += (nMixR / downsample);
+  mixL += (nMixL / downsample);
+  mixR += (nMixR / downsample);
 
-	nMixL = nMixR = 0;
+  nMixL = nMixR = 0;
 }

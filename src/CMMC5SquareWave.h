@@ -30,79 +30,79 @@ class CMMC5SquareWave
 {
 public:
 
-	// // // // // // // // // // // // // // // // // /
-	// Programmable Timer
-	TWIN		nFreqTimer;
-	int			nFreqCount;
+  // // // // // // // // // // // // // // // // // /
+  // Programmable Timer
+  TWIN nFreqTimer;
+  int nFreqCount;
 
-	// // // // // // // // // // // // // // // // // /
-	// Length Counter
-	BYTE		nLengthCount;
-	BYTE		bLengthEnabled;
-	BYTE		bChannelEnabled;
+  // // // // // // // // // // // // // // // // // /
+  // Length Counter
+  BYTE nLengthCount;
+  BYTE bLengthEnabled;
+  BYTE bChannelEnabled;
 
-	// // // // // // // // // // // // // // // // // /
-	// Volume / Decay
-	BYTE		nVolume;
-	BYTE		nDecayVolume;
-	BYTE		bDecayEnable;
-	BYTE		bDecayLoop;
-	BYTE		nDecayTimer;
-	BYTE		nDecayCount;
+  // // // // // // // // // // // // // // // // // /
+  // Volume / Decay
+  BYTE nVolume;
+  BYTE nDecayVolume;
+  BYTE bDecayEnable;
+  BYTE bDecayLoop;
+  BYTE nDecayTimer;
+  BYTE nDecayCount;
 
-	// // // // // // // // // // // // // // // // // /
-	// Duty Cycle
-	BYTE		nDutyCount;
-	BYTE		nDutyCycle;
+  // // // // // // // // // // // // // // // // // /
+  // Duty Cycle
+  BYTE nDutyCount;
+  BYTE nDutyCycle;
 
-	// // // // // // // // // // // // // // // // // /
-	// Output and Downsampling
-	BYTE		bChannelMix;
-	short		nOutputTable_L[0x10];
-	short		nOutputTable_R[0x10];
-	int			nMixL;
-	int			nMixR;
+  // // // // // // // // // // // // // // // // // /
+  // Output and Downsampling
+  BYTE bChannelMix;
+  short nOutputTable_L[0x10];
+  short nOutputTable_R[0x10];
+  int nMixL;
+  int nMixR;
 
-	// // // // // // // // // // // // // // // // // /
-	// Inverting
-	BYTE		bDoInvert;
-	BYTE		bInvert;
-	WORD		nInvertFreqCutoff;
+  // // // // // // // // // // // // // // // // // /
+  // Inverting
+  BYTE bDoInvert;
+  BYTE bInvert;
+  WORD nInvertFreqCutoff;
 
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
 
-	void ClockMajor();
-	void ClockMinor();
-	void DoTicks(int ticks, BYTE mix);
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  void ClockMajor();
+  void ClockMinor();
+  void DoTicks(int ticks, BYTE mix);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };
 
 
 class CMMC5VoiceWave
 {
 public:
-	// // // // // // // // // // // // // // // // // /
-	// Everything
-	BYTE		nOutput;
-	short		nOutputTable_L[0x80];
-	short		nOutputTable_R[0x80];
-	int			nMixL;
-	int			nMixR;
-	BYTE		bInvert;
+  // // // // // // // // // // // // // // // // // /
+  // Everything
+  BYTE nOutput;
+  short nOutputTable_L[0x80];
+  short nOutputTable_R[0x80];
+  int nMixL;
+  int nMixR;
+  BYTE bInvert;
 
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// Functions
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
-	// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // Functions
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
+  // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // /
 
 
-	void DoTicks(int ticks);
-	void Mix_Mono(int& mix, int downsample);
-	void Mix_Stereo(int& mixL, int& mixR, int downsample);
+  void DoTicks(int ticks);
+  void Mix_Mono(int& mix, int downsample);
+  void Mix_Stereo(int& mixL, int& mixR, int downsample);
 };

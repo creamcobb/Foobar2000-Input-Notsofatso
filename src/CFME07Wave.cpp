@@ -22,45 +22,45 @@
 
 void CFME07Wave::DoTicks(int ticks, BYTE mix)
 {
-	register int mn;
+  register int mn;
 
-	if (!bChannelEnabled)		return;
-	if (!nFreqTimer.W)			return;
+  if (!bChannelEnabled)  return;
+  if (!nFreqTimer.W)  return;
 
-	while (ticks)
-	{
-		mn = min(nFreqCount, ticks);
-		ticks -= mn;
+  while (ticks)
+  {
+    mn = min(nFreqCount, ticks);
+    ticks -= mn;
 
-		nFreqCount -= mn;
+    nFreqCount -= mn;
 
-		if (mix && (nDutyCount < 16))
-		{
-			nMixL += nOutputTable_L[nVolume] * mn;
-			nMixR += nOutputTable_R[nVolume] * (bDoInvert ? -mn : mn);
-		}
+    if (mix && (nDutyCount < 16))
+    {
+      nMixL += nOutputTable_L[nVolume] * mn;
+      nMixR += nOutputTable_R[nVolume] * (bDoInvert ? -mn : mn);
+    }
 
-		if (nFreqCount > 0) continue;
-		nFreqCount = nFreqTimer.W;
+    if (nFreqCount > 0) continue;
+    nFreqCount = nFreqTimer.W;
 
-		if (++nDutyCount >= 32)
-		{
-			bDoInvert = bInvert && (nFreqTimer.W < nInvertFreqCutoff);
-			nDutyCount = 0;
-		}
-	}
+    if (++nDutyCount >= 32)
+    {
+      bDoInvert = bInvert && (nFreqTimer.W < nInvertFreqCutoff);
+      nDutyCount = 0;
+    }
+  }
 }
 
 void CFME07Wave::Mix_Mono(int& mix, int downsample)
 {
-	mix += (nMixL / downsample);
-	nMixL = 0;
+  mix += (nMixL / downsample);
+  nMixL = 0;
 }
 
 void CFME07Wave::Mix_Stereo(int& mixL, int& mixR, int downsample)
 {
-	mixL += (nMixL / downsample);
-	mixR += (nMixR / downsample);
+  mixL += (nMixL / downsample);
+  mixR += (nMixR / downsample);
 
-	nMixL = nMixR = 0;
+  nMixL = nMixR = 0;
 }
