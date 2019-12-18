@@ -195,11 +195,11 @@ bool input_nosofatso::g_is_our_content_type(const char *)
 
 bool input_nosofatso::g_is_our_path(const char *, const char * p_extension)
 {
-	if (stricmp_utf8(p_extension, "nsf") == 0)
+	if (stricmp_utf8(p_extension, "ftm") == 0)
+		return true;
+	else if (stricmp_utf8(p_extension, "nsf") == 0)
 		return true;
 	else if (stricmp_utf8(p_extension, "nsfe") == 0)
-		return true;
-	else if (stricmp_utf8(p_extension, "ftm") == 0)
 		return true;
 	else
 		return false;
