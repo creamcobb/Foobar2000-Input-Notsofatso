@@ -45,7 +45,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\foo_sdk;C:\Users\Administrator\Desktop\j0CC-FamiTracker-j0.6.2\src;C:\Users\Administrator\Desktop\wtl10-8356\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\foo_sdk;..\..\j0CC-FamiTracker-j0.6.2\src;..\..\wtl10-8356\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <BasicRuntimeChecks />
       <WholeProgramOptimization>true</WholeProgramOptimization>
