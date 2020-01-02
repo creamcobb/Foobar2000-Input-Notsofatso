@@ -225,5 +225,6 @@ DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 "along with this program; if not, write to the Free Software "\
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111 - 1307  USA\n");
 DECLARE_FILE_TYPE("NSF Sound Format", "*.0CC;*.FTM;*.NSF;*.NSFE");
+
 // This will prevent users from renaming your component around (important for proper troubleshooter behaviors) or loading multiple instances of it.
 VALIDATE_COMPONENT_FILENAME("foo_input_notsofatso.dll");
