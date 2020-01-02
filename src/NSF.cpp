@@ -51,7 +51,7 @@ void input_nosofatso::open(service_ptr_t<file> p_filehint, const char * p_path, 
   if (p_extension == NULL)
     throw exception_io_unsupported_format();
 
-  if (stricmp_utf8(p_extension, "ftm") == 0)
+  if (stricmp_utf8(p_extension, "ftm") == 0 || stricmp_utf8(p_extension, "0cc") == 0)
   {
     service_ptr_t<file> p_nnsf;
     pfc::string8 sz_temp, sz_exist_file = p_localfile, sz_target_file;
@@ -195,13 +195,11 @@ bool input_nosofatso::g_is_our_content_type(const char *)
 
 bool input_nosofatso::g_is_our_path(const char *, const char * p_extension)
 {
-  if (stricmp_utf8(p_extension, "ftm") == 0)
-    return true;
-  else if (stricmp_utf8(p_extension, "nsf") == 0)
-    return true;
-  else if (stricmp_utf8(p_extension, "nsfe") == 0)
-    return true;
-  else
+  const char *ext[] = { "0cc", "ftm", "nsf", "nsfe" };
+  
+  for (int i = 0; i < 4; i ++)
+    if (stricmp_utf8(p_extension, ext[i]) == 0)
+      return true;
     return false;
 }
 
@@ -226,6 +224,6 @@ DECLARE_COMPONENT_VERSION("Notsofatso", "0.8.6.0",
 "You should have received a copy of the GNU General Public License "\
 "along with this program; if not, write to the Free Software "\
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111 - 1307  USA\n");
-DECLARE_FILE_TYPE("NSF Sound Format", "*.FTM;*.NSF;*.NSFE");
+DECLARE_FILE_TYPE("NSF Sound Format", "*.0CC;*.FTM;*.NSF;*.NSFE");
 // This will prevent users from renaming your component around (important for proper troubleshooter behaviors) or loading multiple instances of it.
 VALIDATE_COMPONENT_FILENAME("foo_input_notsofatso.dll");
